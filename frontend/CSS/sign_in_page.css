@@ -1,0 +1,43 @@
+body {
+    background-color: #fff;
+}
+
+.auth-box {
+    background-color: #ffffff;
+    border: 1px solid #be979e;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px #750014;
+}
+
+.auth-box h2 {
+    color: #000000;
+}
+
+.auth-box input[type="email"],
+.auth-box input[type="password"] {
+    border: 1px solid #ced4da;
+}
+
+.auth-box input[type="email"]:focus,
+.auth-box input[type="password"]:focus {
+    border-color: #750014;
+    box-shadow: 0 0 0 0.2rem rgba(117, 0, 20, 0.25);
+}
+
+.btn-custom {
+    background-color: #750014;
+    border-color: #750014;
+    color: #ffffff; /* Колір тексту на кнопці */
+}
+
+.btn-custom:hover {
+    background-color: #ffff80;
+    border-color: #ffff80;
+}
+
+.btn-custom:focus,
+.btn-custom.focus {
+    box-shadow: 0 0 0 0.2rem #750014(0, 123, 255, 0.5);
+}
+
