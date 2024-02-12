@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ВСП "ФКІСІТ КНЕУ ім.В.Гетьмана"</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/static/CSS/main_page.css" rel="stylesheet">
+  <link href="/static/CSS/main_page_admin.css" rel="stylesheet">
   
 </head>
 <body>
@@ -69,11 +69,48 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Документація</a>
           </li>
+          <!-- Додана кнопка -->
+          <li class="nav-item">
+           <button class="nav-link btn btn-link text-white" data-toggle="modal" data-target="#addTabModal">+</button>
+          </li>
+
         </ul>
+        
         
       </div>
     </div>
   </nav>
+
+  <!-- Модальне вікно для додавання вкладинки -->
+<div class="modal fade" id="addTabModal" tabindex="-1" role="dialog" aria-labelledby="addTabModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTabModalLabel">Додати нову вкладинку</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                    <!-- Форма для введення назви та елементів випадаючого списку -->
+                    <form id="addTabForm">
+                        <div class="form-group">
+                            <label for="tabName">Назва вкладинки:</label>
+                            <input type="text" class="form-control" id="tabName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tabItems">Елементи випадаючого списку:</label>
+                            <textarea class="form-control" id="tabItems" rows="3"></textarea>
+                            <small id="tabItemsHelp" class="form-text text-muted">Додавайте елементи через кому, не забудьте поставити пробіл!</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Зберегти</button>
+                    </form>            
+            </div>
+        </div>
+    </div>
+</div>
+
+
   <main>
     <div class="container mt-4">
         <div class="row">
@@ -163,7 +200,7 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="/static/JS/main_page.js"></script>
+  <script src="/static/JS/main_page_admin.js"></script>
   
   
 </body>

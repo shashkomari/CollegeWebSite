@@ -1,0 +1,81 @@
+.navbar {
+    background-color: #750014; 
+  }
+  .navbar-brand,
+  .navbar-nav .nav-link {
+    color: #fff; 
+  }
+  .navbar-brand img {
+    margin-right: 5px; 
+  }
+  .nav-item:hover .dropdown-menu {
+    display: block;
+  }
+  .dropdown-menu {
+    display: none;
+  }
+  .dropdown-item:focus,
+  .dropdown-item.active {
+    background-color: #750014; 
+  }
+ 
+  .navbar-nav .nav-link.btn.btn-link.text-white {
+    color: #fff;
+    background-color: transparent;
+    border: none;
+    font-size: 1.2rem; /* Зменшуємо розмір кнопки */
+    transition: all 0.3s; /* Додаємо плавну анімацію для всіх властивостей */
+    padding: 0.25rem 0.5rem; /* Змінюємо відступи кнопки */
+}
+
+.navbar-nav .nav-link.btn.btn-link.text-white:hover {
+    color: #ccc;
+    background-color: rgba(0, 0, 0, 0.1); /* Додаємо прозорий фон при наведенні */
+    border-radius: 0.25rem; /* Додаємо закругленість кнопки */
+}
+  
+.footer {
+    background-color: #750014; 
+    color: #fff; 
+  }
+  
+  .footer a {
+    color: #fff; 
+  }
+  
+  .footer a:hover {
+    color: #ccc; 
+  }
+  .text-muted {
+    color: #fff; 
+  }
+ 
+  .image-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-img {
+    max-width: 100%;
+    max-height: 100%;
+    /* border: 1px solid #fff; Optional: Add a border to the image */
+    /* box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); Optional: Add a box shadow for aesthetics */
+  }
+  
+  #addTabForm button[type="submit"].btn.btn-primary {
+    background-color: #750014; /* Змінюємо колір кнопки */
+    border-color: #750014; /* Змінюємо колір межі кнопки */
+}
+
+  #addTabForm button[type="submit"].btn.btn-primary:hover {
+    background-color: #590010; /* Змінюємо колір кнопки при наведенні */
+    border-color: #590010; /* Змінюємо колір межі кнопки при наведенні */
+}
