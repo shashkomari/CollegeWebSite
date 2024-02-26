@@ -6,7 +6,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
    
     // Будуємо об'єкт JSON
            var data = {
-             email: parseInt(email),
+             email: email,
              password: parseInt(password)
            };
   

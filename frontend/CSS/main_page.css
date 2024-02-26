@@ -1,28 +1,47 @@
 .navbar {
     background-color: #750014; 
+    /* height: 100px; */
   }
-  .navbar-brand,
+  
   .navbar-nav .nav-link {
     color: #fff; 
+    font-size: 1em; /* Наприклад, 1.2 em */
   }
   .navbar-brand img {
     margin-right: 5px; 
+    width: 40px;
+    height: 40px;
+  }
+  .navbar-brand{
+    font-size: 28px;
   }
   .nav-item:hover .dropdown-menu {
     display: block;
   }
   .dropdown-menu {
     display: none;
+    max-width: 400px;
   }
   .dropdown-item:focus,
   .dropdown-item.active {
     background-color: #750014; 
   }
- 
   
+  .dropdown-item {
+    font-size: 0.9em; /* Задаємо мінімальну ширину випадаючого списку */
+  }
+
+
+  body {
+    font-size: 1.2em; /* Змініть розмір тексту за необхідністю */
+}
+  h2{
+  font-size: 1.2em;
+}
 .footer {
     background-color: #750014; 
     color: #fff; 
+    font-size: 16px;
   }
   
   .footer a {
@@ -34,6 +53,7 @@
   }
   .text-muted {
     color: #fff; 
+    margin-left: 14px;
   }
  
   .image-overlay {
@@ -48,12 +68,21 @@
     align-items: center;
     z-index: 1000;
   }
+  .col-lg-4 img {
+    margin-bottom: 15px; /* Змініть розмір відступу за необхідності */
+}
   
   .modal-img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 40em;
+    height: 30em;
     /* border: 1px solid #fff; Optional: Add a border to the image */
     /* box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); Optional: Add a box shadow for aesthetics */
   }
-  
+  .container-fluid {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
   

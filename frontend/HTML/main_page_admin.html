@@ -7,13 +7,14 @@
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="/static/CSS/main_page_admin.css" rel="stylesheet">
   
+  
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
+    <div class="container-fluid">
       <a class="navbar-brand" href="#">
         <img src="/static/RESOURCES/ФЕНІКС.png" width="30" height="30" class="d-inline-block align-top" alt="">
-        ФКІСІТ 
+        ФКІСІТ КНЕУ
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -69,50 +70,48 @@
           <li class="nav-item">
             <a class="nav-link" href="#">Документація</a>
           </li>
-          <!-- Додана кнопка -->
-          <li class="nav-item">
-           <button class="nav-link btn btn-link text-white" data-toggle="modal" data-target="#addTabModal">+</button>
-          </li>
-
+           <!-- Додана кнопка -->
+           <li class="nav-item">
+            <button class="nav-link btn btn-link text-white" data-toggle="modal" data-target="#addTabModal">+</button>
+           </li>
         </ul>
-        
         
       </div>
     </div>
   </nav>
 
-  <!-- Модальне вікно для додавання вкладинки -->
+<!-- Модальне вікно для додавання вкладинки -->
 <div class="modal fade" id="addTabModal" tabindex="-1" role="dialog" aria-labelledby="addTabModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addTabModalLabel">Додати нову вкладинку</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                    <!-- Форма для введення назви та елементів випадаючого списку -->
-                    <form id="addTabForm">
-                        <div class="form-group">
-                            <label for="tabName">Назва вкладинки:</label>
-                            <input type="text" class="form-control" id="tabName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="tabItems">Елементи випадаючого списку:</label>
-                            <textarea class="form-control" id="tabItems" rows="3"></textarea>
-                            <small id="tabItemsHelp" class="form-text text-muted">Додавайте елементи через кому, не забудьте поставити пробіл!</small>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Зберегти</button>
-                    </form>            
-            </div>
-        </div>
-    </div>
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="addTabModalLabel">Додати нову вкладинку</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+                  <!-- Форма для введення назви та елементів випадаючого списку -->
+                  <form id="addTabForm">
+                      <div class="form-group">
+                          <label for="tabName">Назва вкладинки:</label>
+                          <input type="text" class="form-control" id="tabName" required>
+                      </div>
+                      <div class="form-group">
+                          <label for="tabItems">Елементи випадаючого списку:</label>
+                          <textarea class="form-control" id="tabItems" rows="3"></textarea>
+                          <small id="tabItemsHelp" class="form-text text-muted">Додавайте елементи через кому, не забудьте поставити пробіл!</small>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Зберегти</button>
+                  </form>            
+          </div>
+      </div>
+  </div>
 </div>
 
 
   <main>
-    <div class="container mt-4">
+    <div class="container-fluid mt-4">
         <div class="row">
             <div class="col-lg-8">
                 <h2 class="mb-3">Фаховий коледж інформаційних систем і технологій "КНЕУ ім. Вадима Гетьмана"</h2>
@@ -120,7 +119,8 @@
                 <div class="row align-items-center">
                     <div class="col-lg-4">
                       
-                        <img src="/static/RESOURCES/ФКІСІТ.png" alt="Фото коледжу" class="img-fluid mt-3" data-toggle="modal" data-target="#imageModal">
+                        <img src="/static/RESOURCES/ФКІСІТ.png" alt="Фото коледжу" class="img-fluid mt-3" width="100%" height="100%" data-toggle="modal" data-target="#imageModal">
+                       
                     
                     </div>
                     <div class="col-lg-8">
@@ -145,11 +145,10 @@
                     <p><strong>Методичний кабінет:</strong> тел. (044) 235-82-54</p>
                     <p><strong>Учбова частина:</strong> тел. (044) 272-00-65</p>
                     <p><strong>Бібліотека:</strong> тел. (044) 235-52-55</p>
-                    <p><strong>Телеграм:</strong> <a href="https://t.me/vsp_fkisit_2022" target="_blank">https://t.me/vsp_fkisit_2022</a></p>
                     <p><strong>Адреса:</strong> Львівська площа, 14, Київ, Україна, 04053</p>
                 </div>
 
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2540.2719226653985!2d30.502551276098067!3d50.4546608870612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d4ce5d8c515749%3A0xe1a4da5710d46c46!2z0KTQmtCG0KHQhtCiINCU0JLQndCXICLQmtCd0JXQoyDRltC8LiDQki4g0JPQtdGC0YzQvNCw0L3QsCI!5e0!3m2!1suk!2sde!4v1704995927630!5m2!1suk!2sde" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2540.2719226653985!2d30.502551276098067!3d50.4546608870612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d4ce5d8c515749%3A0xe1a4da5710d46c46!2z0KTQmtCG0KHQhtCiINCU0JLQndCXICLQmtCd0JXQoyDRltC8LiDQki4g0JPQtdGC0YzQvNCw0L3QsCI!5e0!3m2!1suk!2sde!4v1704995927630!5m2!1suk!2sde" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                     width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" class="mt-4"></iframe>
             </div>
             <div class="col-lg-4 bg-light">
@@ -170,11 +169,11 @@
 </main>
  
   <footer class="footer mt-auto py-3">
-    <div class="container">
+    <div class="container-fluid">
       <div class="row">
         <div class="col-md-4">
           <h5>Контакти</h5>
-          <p>Телефон: +123456789<br>Email: kistkneu@gmail.com</p>
+          <p>Телефон: тел. (044) 272-00-65<br>Email: kistkneu@gmail.com</p>
         </div>
         <div class="col-md-4">
           <h5>Посилання</h5>
@@ -187,7 +186,7 @@
           <h5>Соціальні мережі</h5>
           <ul class="list-unstyled">
             <li><a href="#">Facebook</a></li>
-            <li><a href="#">Twitter</a></li>
+            <li><a href="https://t.me/vsp_fkisit_2022" target="_blank">Telegram</a></li>
             <li><a href="#">Instagram</a></li>
           </ul>
         </div>
@@ -201,7 +200,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="/static/JS/main_page_admin.js"></script>
-  
   
 </body>
 </html>
