@@ -7,12 +7,12 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     // Будуємо об'єкт JSON
            var data = {
              email: email,
-             password: parseInt(password)
+             password: password
            };
   
     
            // Відправляємо POST-запит
-           fetch('http://localhost:8080/sign_in', {
+           fetch('http://localhost:8080/api/sign_in', {
              method: 'POST',
              headers: {
                'Content-Type': 'application/json'
