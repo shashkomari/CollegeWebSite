@@ -4,10 +4,11 @@ import (
 	"fmt"
 
 	"github.com/shashkomari/CollegeWebSite.git/backend/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type accountRepository interface {
-	GetAccount(signIn models.AccountData) (models.AccountData, error)
+	GetAccount(email string) (models.AccountData, error)
 }
 
 type AccountService struct {
@@ -21,17 +22,26 @@ func NewAccountService(repository accountRepository) *AccountService {
 }
 
 func (s *AccountService) GetAccount(signIn models.AccountData) error {
-	var account models.AccountData
-	var err error
+	// hash_password, err := bcrypt.GenerateFromPassword([]byte(signIn.Password), 14)
+	// if err != nil {
+	// 	return fmt.Errorf("repository.GenerateFromPassword: %w", err)
+	// }
 
-	account, err = s.repository.GetAccount(signIn)
+	account, err := s.repository.GetAccount(signIn.Email)
 	if err != nil {
 		return fmt.Errorf("repository.GetAccount: %w", err)
 	}
 
-	if account.Email != signIn.Email || account.Password != signIn.Password {
-		return fmt.Errorf("the login or passwort is inncorrect")
+	//fmt.Printf("Password: %q", account.Password)
+
+	err = bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(signIn.Password))
+	if err != nil {
+		return fmt.Errorf("repository.CompareHashAndPassword: %w", err)
 	}
+
+	// if account.Email != signIn.Email || account.Password != signIn.Password {
+	// 	return fmt.Errorf("the login or passwort is inncorrect")
+	// }
 
 	return nil
 }
