@@ -94,3 +94,80 @@
     background-color: #590010; /* Змінюємо колір кнопки при наведенні */
     border-color: #590010; /* Змінюємо колір межі кнопки при наведенні */
 }
+/* CSS for the sidebar */
+.sidebar {
+  position: fixed;
+  top: 100px; /* Height of the navbar */
+  bottom: 450px; /* Height of the footer */
+  left: 0;
+  width: 20%; /* відносна ширина сайдбару */
+  background-color: #f8f9fa;
+  padding: 2%; /* відносний відступ всередині сайдбару */
+}
+
+/* CSS for the main content */
+main {
+  margin-left: 20%; /* Adjust margin to match sidebar width */
+  transition: margin-left 0.3s ease; /* Add transition for smooth animation */
+}
+
+.sidebar button {
+  width: 100%; /* розмір кнопки відповідно до батьківського контейнера (сайдбару) */
+  margin-bottom: 5%; /* відносний відступ між кнопками */
+  font-size: 2vw; /* відносний розмір тексту кнопок */
+}
+#textOptionsModal button[type="button"].btn.btn-primary {
+  background-color: #750014; /* Змінюємо колір кнопки */
+  border-color: #750014; /* Змінюємо колір межі кнопки */
+}
+
+#textOptionsModal button[type="button"].btn.btn-primary:hover {
+  background-color: #590010; /* Змінюємо колір кнопки при наведенні */
+  border-color: #590010; /* Змінюємо колір межі кнопки при наведенні */
+}
+/* Media query для більших екранів */
+@media (min-width: 1024px) {
+  .sidebar button {
+    width: 100%; /* розмір кнопки відповідно до батьківського контейнера (сайдбару) */
+    margin-bottom: 5%; /* відносний відступ між кнопками */
+    font-size: 1.1vw; /* Зменшення розміру тексту для більших екранів */
+  }
+  /* CSS for the sidebar */
+.sidebar {
+  position: fixed;
+  top: 100px; /* Height of the navbar */
+  bottom: 430px; /* Height of the footer */
+  left: 0;
+  width: 16%; /* відносна ширина сайдбару */
+  background-color: #f8f9fa;
+  padding: 2%; /* відносний відступ всередині сайдбару */
+}
+main {
+  margin-left: 16%; /* Adjust margin to match sidebar width */
+  transition: margin-left 0.3s ease; /* Add transition for smooth animation */
+}
+}
+/* Adjust the sidebar and main content when the navbar is expanded */
+.navbar-expand-lg .navbar-collapse {
+  z-index: 1000;
+}
+
+/* Adjust main content when the footer is sticky */
+.footer {
+  z-index: 1000;
+}
+.close {
+  position: absolute;
+  top: -7px;
+  right: 0;
+  cursor: pointer;
+  padding: 0px;
+  color: red; /* Колір крестика */
+  font-weight: bold; /* Жирний текст */
+}
+
+
+
+
+
+
