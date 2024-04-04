@@ -6,12 +6,13 @@
   <title>ВСП "ФКІСІТ КНЕУ ім.В.Гетьмана"</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="../CSS/main_page_admin.css" rel="stylesheet">
+  <link rel="icon" type="image/png" href="../RESOURCES/ФЕНІКС.png">
   
   
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container-fluid">
+    <div class="container-fluid content" contenteditable="false">
       <a class="navbar-brand" href="#">
         <img src="../RESOURCES/ФЕНІКС.png" width="30" height="30" class="d-inline-block align-top" alt="">
         ФКІСІТ КНЕУ
@@ -114,8 +115,8 @@
   <ul class="list-unstyled">
     <li><button class="btn btn-primary" id="addTextButton">Додати</button></li>
     <li><button class="btn btn-danger" id="deleteButton">Видалити</button></li>
-    <li><button class="btn btn-warning">Редагувати</button></li>
-    <li><button class="btn btn-success">Затвердити</button></li>
+    <li><button class="btn btn-warning" id="changeButton">Редагувати</button></li>
+    <li><button class="btn btn-success" id="confirmButton">Затвердити</button></li>
   </ul>
 </div>
 <!-- Add this code within the body section of your HTML -->
@@ -166,8 +167,10 @@
   </div>
 </div>
 
+
+
   <main>
-    <div class="container-fluid mt-4">
+    <div class="container-fluid mt-4 content" contenteditable="false">
         <div class="row">
             <div class="col-lg-8">
                 <h2 class="mb-3">Фаховий коледж інформаційних систем і технологій "КНЕУ ім. Вадима Гетьмана"</h2>

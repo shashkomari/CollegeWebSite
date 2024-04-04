@@ -165,7 +165,10 @@ main {
   color: red; /* Колір крестика */
   font-weight: bold; /* Жирний текст */
 }
-
+.content[contenteditable="true"] {
+  outline: none;
+  border: none;
+}
 
 
 
