@@ -3,8 +3,12 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"net/http"
 	"path/filepath"
+	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/shashkomari/CollegeWebSite.git/backend/handlers"
 	"github.com/shashkomari/CollegeWebSite.git/backend/repositories"
 	"github.com/shashkomari/CollegeWebSite.git/backend/services"
@@ -42,6 +46,17 @@ func main() {
 	})
 
 	r.GET("/main_page_admin", func(c *gin.Context) {
+		tokenString := c.Query("token")
+
+		err := verifyTokenExpiration(tokenString)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error StatusUnauthorized": err.Error()})
+
+			return
+		}
+
+		//c.JSON(http.StatusOK, gin.H{"message": "Token is valid and expiration time has not passed."})
+
 		c.HTML(200, "main_page_admin.html", gin.H{})
 	})
 
@@ -66,6 +81,43 @@ func ConnectToDB() (*sql.DB, error) {
 
 	// Open a connection to the PostgreSQL database
 	return sql.Open("postgres", connStr)
+}
+
+func verifyTokenExpiration(tokenString string) error {
+	// Парсимо токен
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		// Здійснюємо перевірку, чи підписований метод правильний
+		log.Println(token.Raw)
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("invalid signing method: %v", token.Header["alg"])
+		}
+		// Повертаємо ключ для перевірки підпису
+		return []byte("my_secret_key"), nil
+	})
+
+	if err != nil {
+		return fmt.Errorf("parsing faild: %v", err) // Помилка при парсингу токену
+	}
+
+	// Перевіряємо чи токен валідний
+	if !token.Valid {
+		return fmt.Errorf("invalid token")
+	}
+
+	// Перевіряємо термін придатності токену
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return fmt.Errorf("invalid token format or token is invalid")
+	}
+
+	expirationTime := int64(claims["exp"].(float64))
+	currentTime := time.Now().Unix()
+
+	if currentTime > expirationTime {
+		return fmt.Errorf("token expiration time has passed")
+	}
+
+	return nil
 }
 
 // package main

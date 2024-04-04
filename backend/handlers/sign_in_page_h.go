@@ -12,7 +12,7 @@ type accountService interface {
 	//CreateAccount()()
 	//DeleteAccount()()
 	//UpdateAccount()()
-	GetAccount(signIn models.AccountData) error
+	GetAccount(signIn models.AccountData) (string, error)
 }
 
 type AccountHTTP struct {
@@ -28,16 +28,23 @@ func (h *AccountHTTP) SignIn(c *gin.Context) {
 
 	if err := c.BindJSON(&account); err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error BindJSON": err.Error(),
+		})
 		return
 	}
 
-	err := h.accountService.GetAccount(account)
+	token, err := h.accountService.GetAccount(account)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error h.accountService.GetAccount": err.Error(),
+		})
 		return
 	}
+	log.Println("token: ", token)
 
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"token": token,
+	})
 }
