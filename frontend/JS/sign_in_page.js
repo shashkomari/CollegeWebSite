@@ -1,3 +1,8 @@
+function getData() {
+  // Отримати токен з локального сховища
+  const token = localStorage.getItem('token');
+  window.location.href = '/main_page_admin?token=${token}';
+}
 document.getElementById('loginForm').addEventListener('submit', function(event) {
 
     event.preventDefault(); // Щоб сторінка не перезавантажувалася при натисканні кнопки
@@ -19,19 +24,19 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
              },
              body: JSON.stringify(data)
            })
-           .then(function(response) {
-             if (response.ok) {
-               // Обробляємо відповідь
-               console.log(response);
-             } else {
-               response.json().then(function(data) {
-               var errorMessage = data.Error;
-               alert(errorMessage);
-             });
-             }
+           .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+            })
+            .then(data => {
+            // Успішна авторизація, зберегти токен і перейти на адміністративну сторінку
+            console.log('token: ', data.token);
+            localStorage.setItem('token', data.token);
+            getData();
            })
-           .catch(function(error) {
-             // Обробляємо помилку
-             console.error(error);
-           });
+            .catch(error => {
+            console.error('There was an error!', error);
+            });
     });
