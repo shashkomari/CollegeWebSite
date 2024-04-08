@@ -1,7 +1,7 @@
 function getData() {
   // Отримати токен з локального сховища
   const token = localStorage.getItem('token');
-  window.location.href = '/main_page_admin?token=${token}';
+  window.location.href = `/main_page_admin?token=${token}`;
 }
 document.getElementById('loginForm').addEventListener('submit', function(event) {
 
