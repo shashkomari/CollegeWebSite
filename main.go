@@ -1,7 +1,9 @@
 package main
 
 import (
-	"database/sql"
+	"context"
+
+	//"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,17 +14,19 @@ import (
 	"github.com/shashkomari/CollegeWebSite.git/backend/handlers"
 	"github.com/shashkomari/CollegeWebSite.git/backend/repositories"
 	"github.com/shashkomari/CollegeWebSite.git/backend/services"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
 
 func main() {
-	db, err := ConnectToDB()
+	conn, err := ConnectToDB()
 	if err != nil {
 		panic(err.Error())
 	}
-	defer db.Close()
+	defer conn.Disconnect(context.TODO())
 
 	r := gin.Default()
 
@@ -30,7 +34,7 @@ func main() {
 	templatesPath, _ := filepath.Abs("frontend/HTML")
 	r.LoadHTMLGlob(templatesPath + "/*")
 
-	accountRepository := repositories.NewAccountRepository(db)
+	accountRepository := repositories.NewAccountRepository(conn)
 	accountServices := services.NewAccountService(accountRepository)
 	accountHandlers := handlers.NewAccountHttp(accountServices)
 
@@ -68,19 +72,34 @@ func main() {
 	r.Run(fmt.Sprintf(":%d", port))
 }
 
-func ConnectToDB() (*sql.DB, error) {
+// func ConnectToDB() (*sql.DB, error) {
+// 	// Replace these values with your PostgreSQL database connection details
+// 	dbHost := "localhost"
+// 	dbPort := "5432"
+// 	dbUser := "postgres"
+// 	dbPassword := "postgres"
+// 	dbName := "college_web_site_db"
+
+// 	// Construct the connection string
+// 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbPassword, dbName)
+
+// 	// Open a connection to the PostgreSQL database
+// 	return sql.Open("postgres", connStr)
+// }
+
+func ConnectToDB() (*mongo.Client, error) {
 	// Replace these values with your PostgreSQL database connection details
 	dbHost := "localhost"
-	dbPort := "5432"
-	dbUser := "postgres"
-	dbPassword := "postgres"
-	dbName := "college_web_site_db"
+	dbPort := "27017"
 
-	// Construct the connection string
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbPassword, dbName)
+	uri := fmt.Sprintf("mongodb://%s:%s", dbHost, dbPort)
+	clientOptions := options.Client().ApplyURI(uri)
+	client, err := mongo.Connect(context.TODO(), clientOptions)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// Open a connection to the PostgreSQL database
-	return sql.Open("postgres", connStr)
+	return client, nil
 }
 
 func verifyTokenExpiration(tokenString string) error {

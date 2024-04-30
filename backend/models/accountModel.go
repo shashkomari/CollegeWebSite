@@ -1,6 +1,6 @@
 package models
 
 type AccountData struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Password string `bson:"password_hash"`
+	Email    string `bson:"email"`
 }
