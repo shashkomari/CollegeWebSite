@@ -1,7 +1,10 @@
 package main
 
 import (
-	"database/sql"
+	"context"
+	"os"
+
+	//"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,17 +15,19 @@ import (
 	"github.com/shashkomari/CollegeWebSite.git/backend/handlers"
 	"github.com/shashkomari/CollegeWebSite.git/backend/repositories"
 	"github.com/shashkomari/CollegeWebSite.git/backend/services"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
 
 func main() {
-	db, err := ConnectToDB()
+	conn, err := ConnectToDB()
 	if err != nil {
 		panic(err.Error())
 	}
-	defer db.Close()
+	defer conn.Disconnect(context.TODO())
 
 	r := gin.Default()
 
@@ -30,11 +35,13 @@ func main() {
 	templatesPath, _ := filepath.Abs("frontend/HTML")
 	r.LoadHTMLGlob(templatesPath + "/*")
 
-	accountRepository := repositories.NewAccountRepository(db)
-	accountServices := services.NewAccountService(accountRepository)
-	accountHandlers := handlers.NewAccountHttp(accountServices)
+	repository := repositories.NewRepository(conn)
+	service := services.NewService(repository)
+	handler := handlers.NewHttpHandler(service)
 
-	r.POST("/api/sign_in", accountHandlers.SignIn)
+	r.POST("/api/tab", handler.CreateTab)
+
+	r.POST("/api/sign_in", handler.SignIn)
 
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(200, "main_page.html", gin.H{})
@@ -55,9 +62,7 @@ func main() {
 			return
 		}
 
-		//c.JSON(http.StatusOK, gin.H{"message": "Token is valid and expiration time has not passed."})
-
-		c.HTML(200, "main_page_admin.html", gin.H{})
+		c.HTML(http.StatusOK, "main_page_admin.html", gin.H{})
 	})
 
 	// Serve static files (CSS, JS)
@@ -68,19 +73,19 @@ func main() {
 	r.Run(fmt.Sprintf(":%d", port))
 }
 
-func ConnectToDB() (*sql.DB, error) {
-	// Replace these values with your PostgreSQL database connection details
-	dbHost := "localhost"
-	dbPort := "5432"
-	dbUser := "postgres"
-	dbPassword := "postgres"
-	dbName := "college_web_site_db"
+func ConnectToDB() (*mongo.Client, error) {
+	uri := os.Getenv("MONGODB_URI")
+	if uri == "" {
+		return nil, fmt.Errorf("MONGODB_URI environment variable is not set")
+	}
 
-	// Construct the connection string
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbPassword, dbName)
+	clientOptions := options.Client().ApplyURI(uri)
+	client, err := mongo.Connect(context.TODO(), clientOptions)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// Open a connection to the PostgreSQL database
-	return sql.Open("postgres", connStr)
+	return client, nil
 }
 
 func verifyTokenExpiration(tokenString string) error {
@@ -119,41 +124,3 @@ func verifyTokenExpiration(tokenString string) error {
 
 	return nil
 }
-
-// package main
-
-// import (
-// 	"database/sql"
-// 	"net/http"
-
-// 	"github.com/gin-gonic/gin"
-
-// 	"projects/CollegeWebSite/backend/handlers"
-// 	"projects/CollegeWebSite/backend/repositories"
-// 	"projects/CollegeWebSite/backend/services"
-
-// 	_ "github.com/go-sql-driver/mysql"
-// )
-
-// func main() {
-// 	r := gin.Default()
-// 	r.LoadHTMLGlob("HTML/*")
-// 	r.Static("/css", "./frontend/CSS/")
-
-// 	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/CourseWork")
-// 	if err != nil {
-// 		panic(err.Error())
-// 	}
-
-// 	accountRepository := repositories.NewAccountRepository(db)
-// 	accountServices := services.NewAccountService(accountRepository)
-// 	accountHandlers := handlers.NewAccountHttp(accountServices)
-
-// 	r.GET("/", accountHandlers.GetAccounts)
-
-// 	r.GET("/", func(c *gin.Context) {
-// 		c.HTML(http.StatusOK, "main_page.html", gin.H{})
-// 	})
-
-// 	r.Run()
-// }

@@ -9,21 +9,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type accountRepository interface {
-	GetAccount(email string) (models.AccountData, error)
-}
-
-type AccountService struct {
-	repository accountRepository
-}
-
-func NewAccountService(repository accountRepository) *AccountService {
-	return &AccountService{
-		repository: repository,
-	}
-}
-
-func (s *AccountService) GetAccount(signIn models.AccountData) (string, error) {
+func (s *Service) GetAccount(signIn models.AccountData) (string, error) {
 	// hash_password, err := bcrypt.GenerateFromPassword([]byte(signIn.Password), 14)
 	// if err != nil {
 	// 	return fmt.Errorf("repository.GenerateFromPassword: %w", err)

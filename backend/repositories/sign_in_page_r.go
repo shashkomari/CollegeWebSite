@@ -1,23 +1,15 @@
 package repositories
 
 import (
-	"database/sql"
+	"context"
 	"fmt"
+	"log"
 
 	"github.com/shashkomari/CollegeWebSite.git/backend/models"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-func NewAccountRepository(db *sql.DB) *AccountRepository {
-	return &AccountRepository{
-		db: db,
-	}
-}
-
-type AccountRepository struct {
-	db *sql.DB
-}
-
-func (r *AccountRepository) GetAccount(email string) (models.AccountData, error) {
+func (r *Repository) GetAccount(email string) (models.AccountData, error) {
 	// var email = "m@gmail.com"
 	// var password = "1111"
 
@@ -31,10 +23,12 @@ func (r *AccountRepository) GetAccount(email string) (models.AccountData, error)
 	// }
 
 	account := models.AccountData{}
-
-	err := r.db.QueryRow("SELECT * FROM admin WHERE email = $1", email).Scan(&account.Email, &account.Password)
+	collection := r.db.Collection("accounts")
+	err := collection.FindOne(context.TODO(), bson.M{"email": email}).Decode(&account)
 	if err != nil {
 		return models.AccountData{}, fmt.Errorf("failed to get list of accounts: %w", err)
 	}
+	log.Println(account.Password)
+
 	return account, nil
 }
