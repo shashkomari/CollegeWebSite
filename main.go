@@ -34,11 +34,13 @@ func main() {
 	templatesPath, _ := filepath.Abs("frontend/HTML")
 	r.LoadHTMLGlob(templatesPath + "/*")
 
-	accountRepository := repositories.NewAccountRepository(conn)
-	accountServices := services.NewAccountService(accountRepository)
-	accountHandlers := handlers.NewAccountHttp(accountServices)
+	repository := repositories.NewRepository(conn)
+	service := services.NewService(repository)
+	handler := handlers.NewHttpHandler(service)
 
-	r.POST("/api/sign_in", accountHandlers.SignIn)
+	r.POST("/api/tab", handler.CreateTab)
+
+	r.POST("/api/sign_in", handler.SignIn)
 
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(200, "main_page.html", gin.H{})
@@ -59,9 +61,7 @@ func main() {
 			return
 		}
 
-		//c.JSON(http.StatusOK, gin.H{"message": "Token is valid and expiration time has not passed."})
-
-		c.HTML(200, "main_page_admin.html", gin.H{})
+		c.HTML(http.StatusOK, "main_page_admin.html", gin.H{})
 	})
 
 	// Serve static files (CSS, JS)
@@ -71,21 +71,6 @@ func main() {
 	fmt.Printf("Server is running on http://localhost:%d\n", port)
 	r.Run(fmt.Sprintf(":%d", port))
 }
-
-// func ConnectToDB() (*sql.DB, error) {
-// 	// Replace these values with your PostgreSQL database connection details
-// 	dbHost := "localhost"
-// 	dbPort := "5432"
-// 	dbUser := "postgres"
-// 	dbPassword := "postgres"
-// 	dbName := "college_web_site_db"
-
-// 	// Construct the connection string
-// 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbPassword, dbName)
-
-// 	// Open a connection to the PostgreSQL database
-// 	return sql.Open("postgres", connStr)
-// }
 
 func ConnectToDB() (*mongo.Client, error) {
 	// Replace these values with your PostgreSQL database connection details
@@ -138,41 +123,3 @@ func verifyTokenExpiration(tokenString string) error {
 
 	return nil
 }
-
-// package main
-
-// import (
-// 	"database/sql"
-// 	"net/http"
-
-// 	"github.com/gin-gonic/gin"
-
-// 	"projects/CollegeWebSite/backend/handlers"
-// 	"projects/CollegeWebSite/backend/repositories"
-// 	"projects/CollegeWebSite/backend/services"
-
-// 	_ "github.com/go-sql-driver/mysql"
-// )
-
-// func main() {
-// 	r := gin.Default()
-// 	r.LoadHTMLGlob("HTML/*")
-// 	r.Static("/css", "./frontend/CSS/")
-
-// 	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1:3306)/CourseWork")
-// 	if err != nil {
-// 		panic(err.Error())
-// 	}
-
-// 	accountRepository := repositories.NewAccountRepository(db)
-// 	accountServices := services.NewAccountService(accountRepository)
-// 	accountHandlers := handlers.NewAccountHttp(accountServices)
-
-// 	r.GET("/", accountHandlers.GetAccounts)
-
-// 	r.GET("/", func(c *gin.Context) {
-// 		c.HTML(http.StatusOK, "main_page.html", gin.H{})
-// 	})
-
-// 	r.Run()
-// }

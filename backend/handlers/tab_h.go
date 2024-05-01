@@ -8,10 +8,10 @@ import (
 	"github.com/shashkomari/CollegeWebSite.git/backend/models"
 )
 
-func (h *HTTP) SignIn(c *gin.Context) {
-	var account models.AccountData
+func (h *HTTP) CreateTab(c *gin.Context) {
+	var tab models.TabData
 
-	if err := c.BindJSON(&account); err != nil {
+	if err := c.BindJSON(&tab); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Error BindJSON": err.Error(),
@@ -19,17 +19,16 @@ func (h *HTTP) SignIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.Service.GetAccount(account)
+	id, err := h.Service.CreateTab(tab)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Error h.Service.GetAccount": err.Error(),
+			"Error h.tabService.CreateTab": err.Error(),
 		})
 		return
 	}
-	log.Println("token: ", token)
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"token": token,
+		"id": id,
 	})
 }

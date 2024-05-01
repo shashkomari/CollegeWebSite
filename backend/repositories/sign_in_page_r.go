@@ -7,22 +7,9 @@ import (
 
 	"github.com/shashkomari/CollegeWebSite.git/backend/models"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func NewAccountRepository(client *mongo.Client) *AccountRepository {
-	dbName := "college_web_site_db"
-	db := client.Database(dbName)
-	return &AccountRepository{
-		db: db,
-	}
-}
-
-type AccountRepository struct {
-	db *mongo.Database
-}
-
-func (r *AccountRepository) GetAccount(email string) (models.AccountData, error) {
+func (r *Repository) GetAccount(email string) (models.AccountData, error) {
 	// var email = "m@gmail.com"
 	// var password = "1111"
 
