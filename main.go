@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"os"
 
 	//"database/sql"
 	"fmt"
@@ -73,11 +74,11 @@ func main() {
 }
 
 func ConnectToDB() (*mongo.Client, error) {
-	// Replace these values with your PostgreSQL database connection details
-	dbHost := "localhost"
-	dbPort := "27017"
+	uri := os.Getenv("MONGODB_URI")
+	if uri == "" {
+		return nil, fmt.Errorf("MONGODB_URI environment variable is not set")
+	}
 
-	uri := fmt.Sprintf("mongodb://%s:%s", dbHost, dbPort)
 	clientOptions := options.Client().ApplyURI(uri)
 	client, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
