@@ -94,6 +94,20 @@
     background-color: #590010; /* Змінюємо колір кнопки при наведенні */
     border-color: #590010; /* Змінюємо колір межі кнопки при наведенні */
 }
+
+
+#editLinkModal .btn-primary {
+  background-color: #750014; /* Змінюємо колір кнопки */
+  border-color: #750014; /* Змінюємо колір межі кнопки */
+    
+}
+
+/* Селектор для зміни кольору рамки кнопки при наведенні */
+#editLinkModal .btn-primary:hover {
+  background-color: #590010; /* Змінюємо колір кнопки при наведенні */
+  border-color: #590010; /* Змінюємо колір межі кнопки при наведенні */
+    
+}
 /* CSS for the sidebar */
 .sidebar {
   position: fixed;
@@ -102,8 +116,10 @@
   left: 0;
   width: 20%; /* відносна ширина сайдбару */
   background-color: #f8f9fa;
+  z-index: 1000;
   padding: 2%; /* відносний відступ всередині сайдбару */
 }
+
 
 /* CSS for the main content */
 main {
@@ -112,6 +128,7 @@ main {
 }
 
 .sidebar button {
+  display: block;
   width: 100%; /* розмір кнопки відповідно до батьківського контейнера (сайдбару) */
   margin-bottom: 5%; /* відносний відступ між кнопками */
   font-size: 2vw; /* відносний розмір тексту кнопок */
@@ -122,6 +139,15 @@ main {
 }
 
 #textOptionsModal button[type="button"].btn.btn-primary:hover {
+  background-color: #590010; /* Змінюємо колір кнопки при наведенні */
+  border-color: #590010; /* Змінюємо колір межі кнопки при наведенні */
+}
+#addSubTabModal button[type="button"].btn.btn-primary {
+  background-color: #750014; /* Змінюємо колір кнопки */
+  border-color: #750014; /* Змінюємо колір межі кнопки */
+}
+
+#addSubTabModal button[type="button"].btn.btn-primary:hover {
   background-color: #590010; /* Змінюємо колір кнопки при наведенні */
   border-color: #590010; /* Змінюємо колір межі кнопки при наведенні */
 }
