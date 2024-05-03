@@ -78,6 +78,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Вставити нову вкладку перед кнопкою "+"
     addTabButton.parentNode.insertBefore(newTab, addTabButton);
+    
+    // Очистити поле вводу після відправки форми
+    document.getElementById('tabName').value = '';
 
     })
     .catch(error => {
