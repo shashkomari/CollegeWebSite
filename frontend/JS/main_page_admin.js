@@ -30,26 +30,31 @@ document.addEventListener('DOMContentLoaded', function () {
         overlay.remove();
       });
     }
+
+    // ВКЛАДИНКИ --------------------------------------------------------------------------------------------------------------------------------------------------------------
     
     const addTabForm = document.getElementById('addTabForm');
 
-    // Обробка події відправки форми
     addTabForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
-        // Отримання значень полів форми
-        const tabName = document.querySelectorAll('.tabName').value;
-
+        var tabName = document.getElementById('tabName').value;
+       
+       
+        // Будуємо об'єкт JSON
+               var data = {
+                 "type": 'tab',
+                 "name": tabName
+               };
         // Відправка даних на сервер за допомогою Fetch API та JSON
         fetch('http://localhost:8080/api/tab', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            
+            'Content-Type': 'application/json; charset=utf-8'
         },
-        body: JSON.stringify({
-            type: 'tab',
-            name: tabName
-        })
+        body: JSON.stringify(data)
+      
     })
     .then(response => response.json())
     .then(data => {
@@ -66,9 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
         </a>
     `;
 
-    // // Додавання нової вкладинки до навбару
-    // const navbarNav = document.querySelector('#navbarNav .navbar-nav');
-    // navbarNav.appendChild(newTab);
+    
     // Знаходимо батьківський елемент кнопки "+"
     // Знайти елемент, перед яким треба вставити нову вкладку
     const addTabButton = document.querySelector('.nav-item:last-child');
@@ -86,6 +89,9 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#addTabModal').modal('hide');
     });
      
+    // ПІДВКЛАДИНКИ ТА БЛОКИ --------------------------------------------------------------------------------------------------------------------------------------
+
+
     // // let tabCounter = 7;
     // let blockCounter = 6;
 
@@ -349,14 +355,41 @@ $('#textOptionsModal').modal('hide');
 //       return response.json();
 //     })
 //     .then(data => {
-//       console.log('Підвкладинка успішно збережена:', data);
-//       // Додаткові дії після успішного збереження
+//         console.log('Підвкладинка успішно збережена:', data);
+//         // Додаткові дії після успішного збереження
+//         handleSubTabData(data); // Додавання підвкладинки до навбару
 //     })
 //     .catch(error => {
-//       console.error('Помилка при збереженні підвкладинки:', error);
+//         console.error('Помилка при збереженні підвкладинки:', error);
 //     });
+    
 //   }
-  
+//   // Функція для додавання підвкладинок до вкладинки в навбарі
+// function addSubTabToNavbar(tabId, subTabName) {
+//     // Знайдемо елемент в навбарі зі співпадаючим tabId
+//     const tabItems = document.querySelectorAll('.tabItems');
+//     tabItems.forEach(item => {
+//         if (item.getAttribute('tabCounter') === tabId) {
+//             // Створимо новий пункт меню для підвкладинки
+//             const subTabItem = document.createElement('a');
+//             subTabItem.classList.add('dropdown-item', 'item');
+//             subTabItem.setAttribute('style', 'position: relative;');
+//             subTabItem.textContent = subTabName;
+//             item.nextElementSibling.appendChild(subTabItem);
+//         }
+//     });
+// }
+
+// // Приймаємо дані підвкладинки та додаємо їх до навбару
+// function handleSubTabData(data) {
+//     // Отримання даних про вкладинку та підвкладинку
+//     const tabId = data.tabId;
+//     const subTabName = data.name;
+
+//     // Додаємо підвкладинку до відповідної вкладинки в навбарі
+//     addSubTabToNavbar(tabId, subTabName);
+// }
+
 //   // Прослуховування події кліку на кнопку "Зберегти" у формі
 //   document.getElementById('saveSubTab').addEventListener('click', function(event) {
 //     event.preventDefault();
@@ -404,6 +437,8 @@ $('#textOptionsModal').modal('hide');
     //         console.error('Error:', error);
     //     });
     // }
+
+    // ВИДАЛЕННЯ ---------------------------------------------------------------------------------------------------------------------------------------------
     
 // Отримати кнопку "Видалити" за її ID
 var deleteButton = document.getElementById("deleteButton");
@@ -451,6 +486,8 @@ deleteButton.addEventListener("click", function() {
 
     // sendDeleteRequest(dataToDelete);
 });
+
+// РЕДАГУВАННЯ -------------------------------------------------------------------------------------------------------------------------------------------
 // Функція, яка буде викликана при натисканні на кнопку "Редагувати"
 document.getElementById("changeButton").addEventListener("click", function() {
     // Отримуємо всі елементи div з класом 'item'
