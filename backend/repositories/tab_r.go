@@ -15,7 +15,6 @@ func (r *Repository) CreateTab(name string) (string, error) {
 		return "", fmt.Errorf("failed to create tab: %w", err)
 	}
 
-	insertedID := result.InsertedID.(primitive.ObjectID)
-	id := insertedID.Hex()
+	id := result.InsertedID.(primitive.ObjectID).Hex()
 	return id, nil
 }
