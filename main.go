@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"os"
+	"text/template"
 
 	//"database/sql"
 	"fmt"
@@ -65,12 +66,29 @@ func main() {
 		c.HTML(http.StatusOK, "main_page_admin.html", gin.H{})
 	})
 
+	// /////////////////////////
+	type Data struct {
+		Message string
+	}
+
+	tmpl := template.Must(template.ParseFiles("frontend/HTML/test_template.html"))
+	r.GET("/tmpl", func(c *gin.Context) {
+		c.HTML(200, "test_template.html", gin.H{})
+		data := Data{Message: "Lalala"}
+		err := tmpl.Execute(c.Writer, data)
+		if err != nil {
+			log.Println(err)
+		}
+	})
+
+	//////////////////////////
 	// Serve static files (CSS, JS)
 	r.Static("/static", "./frontend")
 
 	port := 8080
 	fmt.Printf("Server is running on http://localhost:%d\n", port)
 	r.Run(fmt.Sprintf(":%d", port))
+
 }
 
 func ConnectToDB() (*mongo.Client, error) {
