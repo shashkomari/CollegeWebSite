@@ -12,9 +12,9 @@ type Service interface {
 	//UpdateAccount()()
 	GetAccount(signIn models.AccountData) (string, error)
 
-	CreateTab(tab models.TabData) (string, error)
+	CreateTab(tab models.TabData) (string, string, error)
 
-	CreatePage(page models.CreatePageData) (string, error)
+	CreatePage(page models.CreatePageData) (string, string, error)
 }
 
 func NewHttpHandler(Service Service) *HTTP {

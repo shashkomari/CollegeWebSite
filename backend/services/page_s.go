@@ -8,9 +8,9 @@ import (
 	"github.com/shashkomari/CollegeWebSite.git/backend/models"
 )
 
-func (s *Service) CreatePage(page models.CreatePageData) (string, error) {
+func (s *Service) CreatePage(page models.CreatePageData) (string, string, error) {
 	if page.Name == "" {
-		return "", fmt.Errorf("repository.CreatePage: name is empty")
+		return "", "", fmt.Errorf("repository.CreatePage: name is empty")
 	}
 	text_for_url := translateUkrainianToEnglish(strings.ToLower(page.Name))
 	text_for_url = regexp.MustCompile("[^a-zA-Zа-яА-Я]").ReplaceAllString(text_for_url, "")
@@ -18,10 +18,10 @@ func (s *Service) CreatePage(page models.CreatePageData) (string, error) {
 
 	id, err := s.repository.CreatePage(page, url)
 	if err != nil {
-		return id, fmt.Errorf("repository.CreatePage: %w", err)
+		return id, url, fmt.Errorf("repository.CreatePage: %w", err)
 	}
 
-	return url, nil
+	return id, url, nil
 }
 
 func translateUkrainianToEnglish(ukrainianText string) string {
