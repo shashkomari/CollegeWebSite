@@ -15,6 +15,8 @@ type Service interface {
 	CreateTab(tab models.TabData) (string, string, error)
 
 	CreatePage(page models.CreatePageData) (string, string, error)
+
+	CreateBlock(block models.BlockData) (string, error)
 }
 
 func NewHttpHandler(Service Service) *HTTP {

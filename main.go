@@ -42,6 +42,8 @@ func main() {
 
 	r.POST("/api/tab", handler.CreateTab)
 
+	r.POST("/api/block", handler.CreateBlock)
+
 	r.POST("/api/sign_in", handler.SignIn)
 
 	r.GET("/", func(c *gin.Context) {

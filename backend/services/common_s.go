@@ -12,6 +12,8 @@ type Repository interface {
 	CreateTab(tab string) (string, error)
 
 	CreatePage(page models.CreatePageData, url string) (string, error)
+
+	CreateBlock(block models.BlockData) (string, error)
 }
 
 func NewService(repository Repository) *Service {
