@@ -61,12 +61,13 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log('Відповідь від сервера:', data);
         // Отримання id з відповіді сервера
     const tabId = data.id;
+    const tabUrl = data.page_url;
 
     // Створення нового елементу вкладинки
     const newTab = document.createElement('li');
     newTab.className = 'nav-item';
     newTab.innerHTML = `
-        <a class="nav-link item tabName" style="position: relative;" href="#" tabCounter="${tabId}">
+        <a class="nav-link item tabName" style="position: relative;" href="${tabUrl}" tabCounter="${tabId}">
             ${tabName}
         </a>
     `;
@@ -94,74 +95,40 @@ document.addEventListener('DOMContentLoaded', function () {
      
     // ПІДВКЛАДИНКИ ТА БЛОКИ --------------------------------------------------------------------------------------------------------------------------------------
 
-
-    // // let tabCounter = 7;
-    // let blockCounter = 6;
-
-//     // Отримання інформації про вкладки
-// function getTabsInfo(tabNames, tabItems) {
-//     const tabs = [];
-//     // const tabItemsArray = tabItems.split(',').map(item => item.trim());
+    function getBlockInfo(block, pageId) {
+        let blockInfo = null;
     
-
-//     tabNames.forEach((tabName, index) => {
-//         const itemsArray = tabItems[index].split(',').map(item => item.trim());
-
-//         tabs.push({
-//             name: `${tabName} - ${tabCounter}`,
-//             items: itemsArray
-//         });
-
-//         tabCounter++;
-//     });
-
-//     return tabs;
-// }
-
-//     // Отримання інформації про блоки
-// function getBlocksInfo() {
-//     const blocks = [];
-//     const layout1Blocks = document.querySelectorAll('.layout1');
-//     const layout2Blocks = document.querySelectorAll('.layout2');
-//     const layout3Blocks = document.querySelectorAll('.layout3');
-//     const layoutLink = document.querySelectorAll('.link');
-
-//     layout1Blocks.forEach((block) => {
-//         blocks.push({
-//             type: 'block image+text',
-//             imageSrc: block.querySelector('img').src,
-//             text: block.querySelector('.col-lg-8').textContent.trim()
-//         });
-        
-//     });
-
-//     layout2Blocks.forEach((block) => {
-//         blocks.push({
-//             type: 'block text_only',
-//             text: block.textContent.trim()
-//         });
-        
-//     });
-
-//     layout3Blocks.forEach((block) => {
-//         blocks.push({
-//             type: 'block text+link',
-//             text: block.querySelector('p').textContent.trim(),
-//             link: block.querySelector('a').getAttribute('href')
-//         });
-        
-//     });
-
-//     layoutLink.forEach((block) => {
-//         blocks.push({
-//             type: 'block link',
-//             link: block.querySelector('a').getAttribute('href')
-//         });
-        
-//     });
-
-//     return blocks;
-// }
+        if (block.classList.contains('layout1')) {
+            blockInfo = {
+                type: 'block image+text',
+                imageSrc: block.querySelector('img').src,
+                text: block.querySelector('.col-lg-8').textContent.trim(),
+                pageId: pageId
+            };
+        } else if (block.classList.contains('layout2')) {
+            blockInfo = {
+                type: 'block text',
+                text: block.textContent.trim(),
+                pageId: pageId
+            };
+        } else if (block.classList.contains('layout3')) {
+            blockInfo = {
+                type: 'block text+link',
+                text: block.querySelector('p').textContent.trim(),
+                link: block.querySelector('a').getAttribute('href'),
+                pageId: pageId
+            };
+        } else if (block.classList.contains('link')) {
+            blockInfo = {
+                type: 'block link',
+                link: block.querySelector('a').getAttribute('href'),
+                pageId: pageId
+            };
+        }
+    
+        return blockInfo;
+    }
+    
 
     const sidebar = document.querySelector('.sidebar');
     const sideContent = document.getElementById('sideContent');
@@ -208,9 +175,80 @@ switch (selectedOption) {
     default:
         console.log("No option selected");
 }
+const pageId = '123'; // Отримуємо id сторінки
+
+// Функція для відправлення блоку на сервер
+function sendBlockInfo(blockInfo) {
+    fetch('http://localhost:8080/api/block', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(blockInfo)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Відповідь від сервера з інформацією про блок:', data);
+// Перевіряємо наявність блоку перед встановленням атрибуту
+if (blockInfo.block) {
+    // При отриманні відповіді з id блоку від сервера
+    const blockIdFromServer = data.id; // Припустимо, що це id блоку отримане з сервера
+
+    // Присвоюємо значення blockCounter для блоку
+    blockInfo.block.setAttribute('blockCounter', blockIdFromServer);
+}
+
+    })
+    .catch(error => {
+        console.error('Помилка при відправці блоку:', error);
+    });
+}
+
+// Отримуємо інформацію про блоки
+const layout1Blocks = document.querySelectorAll('.layout1');
+const layout2Blocks = document.querySelectorAll('.layout2');
+const layout3Blocks = document.querySelectorAll('.layout3');
+const layoutLink = document.querySelectorAll('.link');
+
+layout1Blocks.forEach((block) => {
+    const blockInfo = getBlockInfo(block, pageId);
+    if (blockInfo) {
+        blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
+        // Відправляємо блок на сервер
+        sendBlockInfo(blockInfo);
+    }
+});
+
+layout2Blocks.forEach((block) => {
+    const blockInfo = getBlockInfo(block, pageId);
+    if (blockInfo) {
+        blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
+        // Відправляємо блок на сервер
+        sendBlockInfo(blockInfo);
+    }
+});
+
+layout3Blocks.forEach((block) => {
+    const blockInfo = getBlockInfo(block, pageId);
+    if (blockInfo) {
+        blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
+        // Відправляємо блок на сервер
+        sendBlockInfo(blockInfo);
+    }
+});
+
+layoutLink.forEach((block) => {
+    const blockInfo = getBlockInfo(block, pageId);
+    if (blockInfo) {
+        blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
+        // Відправляємо блок на сервер
+        sendBlockInfo(blockInfo);
+    }
+});
+
+
 // Close the modal
 $('#textOptionsModal').modal('hide');
-
         
     });
 
@@ -219,6 +257,7 @@ $('#textOptionsModal').modal('hide');
         const layout = document.createElement('div');
         layout.classList.add('layout1', 'row', 'align-items-center', 'item');
         layout.style.position = 'relative';
+        layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         layout.innerHTML = `
             <div class="col-lg-4">
                 <img src="/static/RESOURCES/IMAGE_ADMIN.png" alt="Image" class="img-fluid mt-3" width="100%" height="100%" data-toggle="modal" data-target="#imageModal">
@@ -227,33 +266,7 @@ $('#textOptionsModal').modal('hide');
                 <p>Це лише приклад. Замініть картинку та введіть Ваш текст!</p>
             </div>
         `;
-        // Додаємо обробник події 'click' для зображення
-        layout.querySelector('img').addEventListener('click', function() {
-        // Отримуємо елемент input для вибору файлу
-        var fileInput = document.createElement('input');
-        fileInput.type = 'file';
-
-        // Додаємо обробник події 'change', який викликається при виборі файлу
-        fileInput.addEventListener('change', function() {
-            // Отримуємо вибраний файл
-            var file = this.files[0];
-
-            // Створюємо об'єкт FileReader
-            var reader = new FileReader();
-
-            // Обробляємо подію 'load', яка виникає при завантаженні файлу
-            reader.addEventListener('load', function() {
-                // Встановлюємо src атрибут фото на базі URL зображення
-                layout.querySelector('img').src = this.result;
-            });
-
-            // Читаємо вміст файлу як URL
-            reader.readAsDataURL(file);
-        });
-
-        // Клікаємо на елемент input для вибору файлу, щоб відкрити вікно вибору файлу
-        fileInput.click();
-    });
+    
     // Додаємо обробник події 'click' для зображення
     layout.querySelector('img').addEventListener('click', function() {
         // Відкриваємо модальне вікно при кліку на зображення
@@ -290,6 +303,7 @@ $('#textOptionsModal').modal('hide');
         const layout = document.createElement('div');
         layout.classList.add('layout2','mt-4', 'item');
         layout.style.position = 'relative';
+        layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         layout.innerHTML = `<p>Це лише приклад. Введіть Ваш текст!</p>`;
         return layout;
     }
@@ -298,6 +312,7 @@ $('#textOptionsModal').modal('hide');
         const layout = document.createElement('div');
         layout.classList.add('layout3','mt-4', 'item');
         layout.style.position = 'relative';
+        layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         layout.innerHTML = `
             <p>Це лише приклад. Введіть Ваш текст та посилання!</p>
             <a href="#">Посилання</a>
@@ -315,9 +330,12 @@ $('#textOptionsModal').modal('hide');
         const extendedLink = document.createElement('li');
         extendedLink.classList.add('link','item');
         extendedLink.style.position = 'relative'; // Додати inline стиль
+        extendedLink.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         extendedLink.innerHTML = '<a href="#">Посилання</a>';
         target.querySelector('ul').appendChild(extendedLink);
     }
+
+
 // // Функція для завантаження вкладинок з сервера
 // function loadTabsFromServer() {
 //     fetch('url/для/запиту/вкладинок')
@@ -689,6 +707,5 @@ document.querySelector('.item img').addEventListener('click', function(event) {
 
 
 });
-
 });
 
