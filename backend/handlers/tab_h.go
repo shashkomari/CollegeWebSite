@@ -23,7 +23,7 @@ func (h *HTTP) CreateTab(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Error h.tabService.CreateTab": err.Error(),
+			"Error h.Service.CreateTab": err.Error(),
 		})
 		return
 	}

@@ -8,7 +8,7 @@ import (
 
 func (s *Service) CreateTab(tab models.TabData) (string, string, error) {
 	if tab.Name == "" {
-		return "", "", fmt.Errorf("repository.CreateTab: name is empty")
+		return "", "", fmt.Errorf("services.CreateTab: name is empty")
 	}
 
 	id, err := s.repository.CreateTab(tab.Name)
