@@ -2,13 +2,13 @@ package models
 
 type CreatePageData struct {
 	Name    string `bson:"name"`
-	TabName string `bson:"tab_name"`
+	TabName string `bson:"tabName"`
 }
 
 type DeletePageData struct {
-	Name string `bson:"name"`
+	Id string `bson:"id"`
 }
 
-type ReturnPageData struct {
-	URL string `bson:"usl"`
+type GetPageIdByUrl struct {
+	URL string `bson:"url"`
 }

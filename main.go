@@ -40,6 +40,8 @@ func main() {
 	service := services.NewService(repository)
 	handler := handlers.NewHttpHandler(service)
 
+	r.GET("/api/page", handler.GetPageIdByUrl)
+
 	r.POST("/api/tab", handler.CreateTab)
 
 	r.POST("/api/block", handler.CreateBlock)

@@ -41,3 +41,12 @@ func translateUkrainianToEnglish(ukrainianText string) string {
 	}
 	return englishText
 }
+
+func (s *Service) GetPageIdByUrl(url string) (string, error) {
+	id, err := s.repository.GetPageIdByUrl(url)
+	if err != nil {
+		return id, fmt.Errorf("repository.GetPageIdByUrl: %w", err)
+	}
+
+	return id, nil
+}
