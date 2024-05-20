@@ -98,30 +98,35 @@ document.addEventListener('DOMContentLoaded', function () {
     function getBlockInfo(block, pageId) {
         let blockInfo = null;
     
-        if (block.classList.contains('layout1')) {
+        if (block.classList.contains('layoutIT')) {
             blockInfo = {
                 type: 'block image+text',
                 imageSrc: block.querySelector('img').src,
                 text: block.querySelector('.col-lg-8').textContent.trim(),
                 pageId: pageId
             };
-        } else if (block.classList.contains('layout2')) {
+        } else 
+        if (block.classList.contains('layoutT')) {
             blockInfo = {
                 type: 'block text',
                 text: block.textContent.trim(),
                 pageId: pageId
             };
-        } else if (block.classList.contains('layout3')) {
+        } else if (block.classList.contains('layoutTL')) {
+            let linkElement = block.querySelector('a');
             blockInfo = {
                 type: 'block text+link',
                 text: block.querySelector('p').textContent.trim(),
-                link: block.querySelector('a').getAttribute('href'),
+                link: linkElement.getAttribute('href'),
+                linkText: linkElement.textContent.trim(),
                 pageId: pageId
             };
-        } else if (block.classList.contains('link')) {
+        } else if (block.classList.contains('linK')) {
+            let linkElement = block.querySelector('a');
             blockInfo = {
                 type: 'block link',
-                link: block.querySelector('a').getAttribute('href'),
+                link: linkElement.getAttribute('href'),
+                linkText: linkElement.textContent.trim(),
                 pageId: pageId
             };
         }
@@ -175,7 +180,75 @@ switch (selectedOption) {
     default:
         console.log("No option selected");
 }
-const pageId = '123'; // Отримуємо id сторінки
+// Функція для отримання ідентифікатора сторінки (pageId) з сервера
+function getPageIdFromServer() {
+    let currentUrl = new URL(window.location.href); // Створюємо об'єкт URL з поточного URL
+
+    // Видаляємо все після знака питання (?)
+    currentUrl.search = '';
+
+    // Відправляємо запит GET на сервер для отримання pageId
+    fetch('http://localhost:8080/api/page', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ url: currentUrl.href })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const pageId = data.id; // Отриманий ідентифікатор сторінки (pageId)
+
+        // Отримуємо інформацію про блоки
+        const layout1Blocks = document.querySelectorAll('.layoutIT');
+        const layout2Blocks = document.querySelectorAll('.layoutT');
+        const layout3Blocks = document.querySelectorAll('.layoutTL');
+        const layoutLink = document.querySelectorAll('.linK');
+
+        layout1Blocks.forEach((block) => {
+            const blockInfo = getBlockInfo(block, pageId);
+            if (blockInfo) {
+                blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
+                // Відправляємо блок на сервер
+                sendBlockInfo(blockInfo);
+            }
+        });
+
+        layout2Blocks.forEach((block) => {
+            const blockInfo = getBlockInfo(block, pageId);
+            if (blockInfo) {
+                blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
+                // Відправляємо блок на сервер
+                sendBlockInfo(blockInfo);
+            }
+        });
+
+        layout3Blocks.forEach((block) => {
+            const blockInfo = getBlockInfo(block, pageId);
+            if (blockInfo) {
+                blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
+                // Відправляємо блок на сервер
+                sendBlockInfo(blockInfo);
+            }
+        });
+
+        layoutLink.forEach((block) => {
+            const blockInfo = getBlockInfo(block, pageId);
+            if (blockInfo) {
+                blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
+                // Відправляємо блок на сервер
+                sendBlockInfo(blockInfo);
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Помилка при отриманні ідентифікатора сторінки:', error);
+    });
+}
+
+// Викликаємо функцію для отримання ідентифікатора сторінки
+getPageIdFromServer();
+
 
 // Функція для відправлення блоку на сервер
 function sendBlockInfo(blockInfo) {
@@ -204,47 +277,6 @@ if (blockInfo.block) {
     });
 }
 
-// Отримуємо інформацію про блоки
-const layout1Blocks = document.querySelectorAll('.layout1');
-const layout2Blocks = document.querySelectorAll('.layout2');
-const layout3Blocks = document.querySelectorAll('.layout3');
-const layoutLink = document.querySelectorAll('.link');
-
-layout1Blocks.forEach((block) => {
-    const blockInfo = getBlockInfo(block, pageId);
-    if (blockInfo) {
-        blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
-        // Відправляємо блок на сервер
-        sendBlockInfo(blockInfo);
-    }
-});
-
-layout2Blocks.forEach((block) => {
-    const blockInfo = getBlockInfo(block, pageId);
-    if (blockInfo) {
-        blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
-        // Відправляємо блок на сервер
-        sendBlockInfo(blockInfo);
-    }
-});
-
-layout3Blocks.forEach((block) => {
-    const blockInfo = getBlockInfo(block, pageId);
-    if (blockInfo) {
-        blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
-        // Відправляємо блок на сервер
-        sendBlockInfo(blockInfo);
-    }
-});
-
-layoutLink.forEach((block) => {
-    const blockInfo = getBlockInfo(block, pageId);
-    if (blockInfo) {
-        blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
-        // Відправляємо блок на сервер
-        sendBlockInfo(blockInfo);
-    }
-});
 
 
 // Close the modal
@@ -255,15 +287,16 @@ $('#textOptionsModal').modal('hide');
     // Function to create layouts
     function createLayout1() {
         const layout = document.createElement('div');
-        layout.classList.add('layout1', 'row', 'align-items-center', 'item');
+        layout.classList.add('layoutIT', 'row', 'align-items-center');
         layout.style.position = 'relative';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
+        // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
         layout.innerHTML = `
-            <div class="col-lg-4">
+            <div class="col-lg-4 item">
                 <img src="/static/RESOURCES/IMAGE_ADMIN.png" alt="Image" class="img-fluid mt-3" width="100%" height="100%" data-toggle="modal" data-target="#imageModal">
             </div>
-            <div class="col-lg-8">
-                <p>Це лише приклад. Замініть картинку та введіть Ваш текст!</p>
+            <div class="col-lg-8 item">
+                <p class="editor">Це лише приклад. Замініть картинку та введіть Ваш текст!</p>
             </div>
         `;
     
@@ -301,21 +334,27 @@ $('#textOptionsModal').modal('hide');
 
     function createLayout2() {
         const layout = document.createElement('div');
-        layout.classList.add('layout2','mt-4', 'item');
+        layout.classList.add('layoutT','mt-4', 'item', 'editor');
         layout.style.position = 'relative';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
-        layout.innerHTML = `<p>Це лише приклад. Введіть Ваш текст!</p>`;
+        // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
+        layout.innerHTML = `<p class="item" style="position: relative;">Це лише приклад. Введіть Ваш текст!</p>`;
         return layout;
     }
 
     function createLayout3() {
         const layout = document.createElement('div');
-        layout.classList.add('layout3','mt-4', 'item');
+        layout.classList.add('layoutTL','mt-4', 'item');
         layout.style.position = 'relative';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
+        // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
         layout.innerHTML = `
-            <p>Це лише приклад. Введіть Ваш текст та посилання!</p>
-            <a href="#">Посилання</a>
+        <div class="editor"
+            <p class="item" style="position: relative;">Це лише приклад. Введіть Ваш текст та посилання!</p>
+        </div>
+        <div>
+            <a class="linkA" href="#">Посилання</a>
+        </div>
         `;
         return layout;
     }
@@ -328,10 +367,10 @@ $('#textOptionsModal').modal('hide');
     // Function to add extended link to side content
     function addExtendedLink(target) {
         const extendedLink = document.createElement('li');
-        extendedLink.classList.add('link','item');
+        extendedLink.classList.add('linK','item');
         extendedLink.style.position = 'relative'; // Додати inline стиль
         extendedLink.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
-        extendedLink.innerHTML = '<a href="#">Посилання</a>';
+        extendedLink.innerHTML = '<a class="linkA" href="#">Посилання</a>';
         target.querySelector('ul').appendChild(extendedLink);
     }
 
@@ -509,10 +548,14 @@ deleteButton.addEventListener("click", function() {
 });
 
 // РЕДАГУВАННЯ -------------------------------------------------------------------------------------------------------------------------------------------
+// // Ініціалізація редактора CKEditor
+// var editorInitialized = false; // Прапорець для перевірки, чи редактор вже ініційований
+
 // Функція, яка буде викликана при натисканні на кнопку "Редагувати"
 document.getElementById("changeButton").addEventListener("click", function() {
     // Отримуємо всі елементи div з класом 'item'
     var items = document.querySelectorAll('.item');
+    // var mainItems = document.querySelectorAll('main .item');
     
     // Перебираємо кожен елемент і додаємо обробник подій для редагування
     items.forEach(function(item) {
@@ -526,17 +569,67 @@ document.getElementById("changeButton").addEventListener("click", function() {
         closeButtons.forEach(function(closeButton) {
             closeButton.style.display = 'none'; // Приховуємо хрестик
         });
+        // if (!editorInitialized) { // Перевірка, чи редактор вже ініційований
+        //     var mainEditors = document.querySelectorAll('main .editor');
+        //      mainEditors.forEach(function(editor, index) {
+        //     ClassicEditor
+        //         .create(editor)
+        //         .then(editor => {
+        //             // Встановлюємо текст з CKEditor до відповідного елементу
+        //             mainItems[index].appendChild(editor.ui.view.editable);
+        //             // Додаємо обробник події 'blur' для збереження змін
+        //             editor.model.document.on('change:data', () => {
+        //                 mainItems[index].innerHTML = editor.getData();
+        //             });
+        //         })
+        //         .catch(error => {
+        //             console.error(error);
+        //         });
+        // });
     
-       // Отримуємо всі посилання на сторінці
-    var links = document.querySelectorAll('a');
+        //     editorInitialized = true; // Позначте, що редактор вже ініційований
+        // }
 
-    // Додаємо обробник подій до кожного посилання
-    links.forEach(function (link) {
-        link.addEventListener('click', function (event) {
-            event.preventDefault(); // Забороняємо стандартну дію посилання
-            openEditModal(link); // Відкриваємо модальне вікно для редагування
-        });
+     // Додаємо обробник події для зміни зображення при натисканні
+     document.querySelector('.item img').addEventListener('click', function(event) {
+        // Викликаємо файлову систему для вибору нового зображення
+        var fileInput = document.createElement('input');
+        fileInput.type = 'file';
+
+        // Додаємо обробник події 'change', який викликається при виборі файлу
+        fileInput.addEventListener('change', function() {
+            // Отримуємо вибраний файл
+            var file = this.files[0];
+            var formData = new FormData(); // Створюємо об'єкт FormData для передачі файлу
+
+        formData.append('file', file); // Додаємо файл до FormData
+
+    //     fetch('url_для_завантаження_зображення', {
+    //         method: 'POST',
+    //         body: formData
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         // Встановлюємо src атрибут фото на базі URL зображення з сервера
+    //         document.querySelector('.item img').src = data.filePath; // Припустимо, що сервер повертає шлях до збереженого зображення
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error);
+    //     });
     });
+
+    fileInput.click();
+});
+     // Отримуємо всі посилання з класом linkA на сторінці
+var links = document.querySelectorAll('a.linkA');
+
+// Додаємо обробник подій до кожного посилання з класом linkA
+links.forEach(function (link) {
+    link.addEventListener('click', function (event) {
+        event.preventDefault(); // Забороняємо стандартну дію посилання
+        openEditModal(link); // Відкриваємо модальне вікно для редагування
+    });
+});
 
     // Функція для відкриття модального вікна для редагування
     function openEditModal(link) {
@@ -582,66 +675,54 @@ if (editedLinkFile) {
     $('#editLinkModal').modal('hide');
     // Отправка данных на сервер методом PUT з updatedData
 }
+// // Функція для отримання інформації про блок
+// function getBlockInfo(block, blockCounter) {
+//     let blockInfo = null;
 
+//     if (block.classList.contains('layoutIT')) {
+//         blockInfo = {
+//             blockCounter: blockCounter,
+//             image: block.querySelector('img').src,
+//             text: block.textContent.trim()
+//         };
+//     } else if (block.classList.contains('layoutT')) {
+//         blockInfo = {
+//             blockCounter: blockCounter,
+//             text: block.textContent.trim()
+//         };
+//     } else if (block.classList.contains('layoutTL')) {
+//         blockInfo = {
+//             blockCounter: blockCounter,
+//             text: block.querySelector('p').textContent.trim(),
+//             link: block.querySelector('a').getAttribute('href')
+//         };
+//     }
+    // } else if (block.classList.contains('tabName') || block.classList.contains('tabItems')) {
+    //     blockInfo = {
+    //         tabCounter: block.getAttribute('tabCounter'),
+    //         TabName: block.querySelector('.tabName').textContent.trim(),
+    //         TabItems: block.querySelector('.tabItems').textContent.trim()
+    //     };
+    // } else if (block.classList.contains('linK')) {
+    //     blockInfo = {
+    //         blockCounter: blockCounter,
+    //         Link: block.querySelector('a').getAttribute('href')
+    //     };
+    // }
 
-            // // Закриваємо модальне вікно
-            // $('#editLinkModal').modal('hide');
-            // Формуємо об'єкт змінених даних для відправки на сервер
-//             var updatedData = {
-//                 BlockPictureAndText: [],
-//                 BlockJustText: [],
-//                 BlockTextAndLink: [],
-//                 Tabs: [],
-//                 Links: []
-//             };
+//     // Перевірка на null і додавання "-" для незміненої інформації
+//     if (blockInfo !== null) {
+//         for (const key in blockInfo) {
+//             if (blockInfo[key] === "") {
+//                 blockInfo[key] = "—";
+//             }
+//         }
+//     }
 
-//             // Додамо змінені дані блоків з зображеннями та текстом
-//             items.forEach(function(item) {
-//                 var blockCounter = item.getAttribute('blockCounter');
-//                 var imgSrc = item.querySelector('img').src;
-//                 var textContent = item.textContent.trim();
+//     return blockInfo;
+// }
 
-//                 if (item.classList.contains('layout1')) {
-//                     updatedData.BlockPictureAndText.push({
-//                         blockCounter: blockCounter,
-//                         Picture: imgSrc,
-//                         Text: textContent
-//                     });
-//                 } else if (item.classList.contains('layout2')) {
-//                     updatedData.BlockJustText.push({
-//                         blockCounter: blockCounter,
-//                         Text: textContent
-//                     });
-//                 } else if (item.classList.contains('layout3')) {
-//                     updatedData.BlockTextAndLink.push({
-//                         blockCounter: blockCounter,
-//                         Text: textContent,
-//                         LinkName : editedLinkName,
-//                         LinkUrl: editedLinkUrl
-//                     });
-//                 } else if (item.classList.contains('tabName') || item.classList.contains('tabItems')) {
-//                     updatedData.Tabs.push({
-//                         tabCounter: item.getAttribute('tabCounter'),
-//                         TabName: tabName,
-//                         TabItems: tabItems
-//                     });
-//                 } else if (item.classList.contains('link')) {
-//                     updatedData.Links.push({
-//                         blockCounter: blockCounter,
-//                         LinkName : editedLinkName,
-//                         LinkUrl: editedLinkUrl,
-//                         LinkFile: editedLinkFile
-//                     });
-//                 }
-//             });
-
-//             // Відправляємо змінені дані на сервер методом PUT
-//             sendPutRequest(updatedData);
-        });
-    }
-});
-
-// // Функція для відправки даних на сервер методом PUT
+// // Функція для відправки даних про блок на сервер методом PUT
 // function sendPutRequest(data) {
 //     fetch('url_для_вашого_сервера', {
 //         method: 'PUT',
@@ -663,49 +744,22 @@ if (editedLinkFile) {
 //         console.error('Error:', error);
 //     });
 // }
-//  });
-   
 
+// items.forEach(function(item) {
+//     var blockCounter = item.getAttribute('blockCounter');
+//     var blockInfo = getBlockInfo(item, blockCounter); // Отримуємо інформацію про блок за допомогою функції getBlockInfo
 
-// Функція, яка буде викликана при натисканні на фото
-document.querySelector('.item img').addEventListener('click', function(event) {
-    // Перевіряємо, чи є якась змінна, яка вказує на режим редагування
-    if (document.querySelector('.item').contentEditable === "true") {
-        // Якщо так, то перериваємо подальше виконання функції
-        // Отримуємо елемент input для вибору файлу
-    var fileInput = document.createElement('input');
-    fileInput.type = 'file';
-
-    // Додаємо обробник події 'change', який викликається при виборі файлу
-    fileInput.addEventListener('change', function() {
-        // Отримуємо вибраний файл
-        var file = this.files[0];
-
-        // Створюємо об'єкт FileReader
-        var reader = new FileReader();
-
-        // Обробляємо подію 'load', яка виникає при завантаженні файлу
-        reader.addEventListener('load', function() {
-            // Встановлюємо src атрибут фото на базі URL зображення
-            document.querySelector('.item img').src = this.result;
+//     // Перевіряємо, чи є інформація про блок
+//     if (blockInfo !== null) {
+//         // Відправляємо дані про блок на сервер методом PUT
+//         sendPutRequest(blockInfo);
+//     }
+// });
+            
         });
-
-        // Читаємо вміст файлу як URL
-        reader.readAsDataURL(file);
-    });
-
-    // Клікаємо на елемент input для вибору файлу, щоб відкрити вікно вибору файлу
-    fileInput.click();
-
-    // Інша дія, яку ви хочете виконати при кліку на фото (відкривання модального вікна)
-    // Цю дію можна додати тут, якщо потрібно
     }
-   else{
-    return;
-   }
-
-
-
 });
+
+
 });
 
