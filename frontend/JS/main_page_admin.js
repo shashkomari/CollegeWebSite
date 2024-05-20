@@ -189,11 +189,11 @@ function getPageIdFromServer() {
 
     // Відправляємо запит GET на сервер для отримання pageId
     fetch('http://localhost:8080/api/page', {
-        method: 'POST',
+        method: 'GET',
         headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ url: currentUrl.href })
+            'Content-Type': 'application/json',
+            'Url' : currentUrl.href
+        }
     })
     .then(response => response.json())
     .then(data => {

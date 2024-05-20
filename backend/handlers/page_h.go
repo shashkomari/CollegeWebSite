@@ -11,10 +11,11 @@ import (
 func (h *HTTP) GetPageIdByUrl(c *gin.Context) {
 	var url models.GetPageIdByUrl
 
-	if err := c.BindJSON(&url); err != nil {
-		log.Println(err)
+	url.URL = c.GetHeader("Url")
+	if url.URL == "" {
+		log.Println("GetPageIdByUrl: Url is empty")
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Error BindJSON": err.Error(),
+			"Error": "GetPageIdByUrl: Url is empty",
 		})
 		return
 	}
