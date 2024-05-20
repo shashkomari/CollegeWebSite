@@ -203,8 +203,8 @@
   </div>
 </div>
 
-<!-- Modal for adding a sub-tab
-<div class="modal fade" id="addSubTabModal" tabindex="-1" role="dialog" aria-labelledby="addSubTabModalLabel" aria-hidden="true">
+<!-- Modal for adding a sub-tab -->
+<!-- <div class="modal fade" id="addSubTabModal" tabindex="-1" role="dialog" aria-labelledby="addSubTabModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -247,13 +247,14 @@
                 <h2 class="mb-3">Фаховий коледж інформаційних систем і технологій "КНЕУ ім. Вадима Гетьмана"</h2>
                 <hr>
                 <div class="row align-items-center layout1" blockCounter="1">
+                  <!-- <div class="row align-items-center" blockCounter="1"></div> -->
                     <div class="col-lg-4 item">
                       
-                        <img src="/static/RESOURCES/ФКІСІТ.png" alt="Фото коледжу" class="img-fluid mt-3" width="100%" height="100%" data-toggle="modal" data-target="#imageModal">
+                        <img src="/static/RESOURCES/ФКІСІТ.png" alt="Фото коледжу" class="img-fluid mt-3" width="100%" height="100%" data-toggle="modal" data-target="#imageModal" >
                        
                     
                     </div>
-                    <div class="col-lg-8 item">
+                    <div class="col-lg-8 item editor">
                         <p>Навчальний заклад був заснований 28 грудня 1951 року на базі Київського електромеханічного технікуму залізничного транспорту та отримав назву Київського електромеханічного технікуму.
 
                             У 1962 р. Київський електромеханічний технікум було перейменовано в Київський технікум радіоелектроніки Міністерства радіопромисловості України.
@@ -264,7 +265,8 @@
                     </div>
                   
                 </div>
-                <div class="mt-4 item layout2" style="position: relative;" blockCounter="2">
+                <div class="mt-4 item layout2 editor" style="position: relative;" blockCounter="2">
+                  <!-- <div class="mt-4 item " style="position: relative;" blockCounter="2"> -->
                     <h3 >Контактна інформація:</h3>
                     <p class="item" style="position: relative;"><strong>Приймальна комісія:</strong> 0507577923</p>
                     <p class="item" style="position: relative;"><strong>Відділ кадрів:</strong> тел. (044) 272-09-90</p>
@@ -295,9 +297,13 @@
                 <div id="sideContent" class="mt-4 item">
                     <h2>Поширенні посилання</h2>
                     <ul class="list-unstyled">
-                        <li class="item link" blockCounter="3" style="position: relative;"><a href="#">Посилання 1</a></li>
-                        <li class="item link" blockCounter="4" style="position: relative;"><a href="#">Посилання 2</a></li>
-                        <li class="item link" blockCounter="5" style="position: relative;"><a href="#">Посилання 3</a></li>
+                        <li class="item link" blockCounter="3" style="position: relative;"><a class="linkA" href="#">Посилання 1</a></li>
+                        <li class="item link" blockCounter="4" style="position: relative;"><a class="linkA" href="#">Посилання 2</a></li>
+                        <li class="item link" blockCounter="5" style="position: relative;"><a class="linkA" href="#">Посилання 3</a></li>
+
+                        <!-- <li class="item" blockCounter="3" style="position: relative;"><a class="linkA" href="#">Посилання 1</a></li>
+                        <li class="item" blockCounter="4" style="position: relative;"><a class="linkA" href="#">Посилання 2</a></li>
+                        <li class="item" blockCounter="5" style="position: relative;"><a class="linkA" href="#">Посилання 3</a></li> -->
                     </ul>
                     
                 </div>
@@ -337,6 +343,8 @@
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+ <!-- CDN-посилання на CKEditor -->
+<script src="https://cdn.ckeditor.com/ckeditor5/34.0.0/classic/ckeditor.js"></script>
   <script src="/static/JS/main_page_admin.js"></script>
   
 </body>
