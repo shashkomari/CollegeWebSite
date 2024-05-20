@@ -548,14 +548,14 @@ deleteButton.addEventListener("click", function() {
 });
 
 // РЕДАГУВАННЯ -------------------------------------------------------------------------------------------------------------------------------------------
-// // Ініціалізація редактора CKEditor
-// var editorInitialized = false; // Прапорець для перевірки, чи редактор вже ініційований
+// Ініціалізація редактора CKEditor
+var editorInitialized = false; // Прапорець для перевірки, чи редактор вже ініційований
 
 // Функція, яка буде викликана при натисканні на кнопку "Редагувати"
 document.getElementById("changeButton").addEventListener("click", function() {
     // Отримуємо всі елементи div з класом 'item'
     var items = document.querySelectorAll('.item');
-    // var mainItems = document.querySelectorAll('main .item');
+    var mainItems = document.querySelectorAll('main .item');
     
     // Перебираємо кожен елемент і додаємо обробник подій для редагування
     items.forEach(function(item) {
@@ -569,57 +569,79 @@ document.getElementById("changeButton").addEventListener("click", function() {
         closeButtons.forEach(function(closeButton) {
             closeButton.style.display = 'none'; // Приховуємо хрестик
         });
-        // if (!editorInitialized) { // Перевірка, чи редактор вже ініційований
-        //     var mainEditors = document.querySelectorAll('main .editor');
-        //      mainEditors.forEach(function(editor, index) {
-        //     ClassicEditor
-        //         .create(editor)
-        //         .then(editor => {
-        //             // Встановлюємо текст з CKEditor до відповідного елементу
-        //             mainItems[index].appendChild(editor.ui.view.editable);
-        //             // Додаємо обробник події 'blur' для збереження змін
-        //             editor.model.document.on('change:data', () => {
-        //                 mainItems[index].innerHTML = editor.getData();
-        //             });
-        //         })
-        //         .catch(error => {
-        //             console.error(error);
-        //         });
-        // });
+        if (!editorInitialized) { // Перевірка, чи редактор вже ініційований
+            var mainEditors = document.querySelectorAll('main .editor');
+             mainEditors.forEach(function(editor, index) {
+            ClassicEditor
+                .create(editor, {
+                    toolbar: {
+                        items: [
+                            'heading',
+                            '|',
+                            'bold',
+                            'italic',
+                            '|',
+                            'alignment',
+                            '|',
+                            'bulletedList',
+                            'numberedList',
+                            '|',
+                            'outdent',
+                            'indent',
+                            '|',
+                            'undo',
+                            'redo'
+                        ]
+                    }
+                })
+                .then(editor => {
+                    // Встановлюємо текст з CKEditor до відповідного елементу
+                    mainItems[index].appendChild(editor.ui.view.editable);
+                    // Додаємо обробник події 'blur' для збереження змін
+                    editor.model.document.on('change:data', () => {
+                        mainItems[index].innerHTML = editor.getData();
+                    });
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        });
     
-        //     editorInitialized = true; // Позначте, що редактор вже ініційований
-        // }
+            editorInitialized = true; // Позначте, що редактор вже ініційований
+        }
 
-     // Додаємо обробник події для зміни зображення при натисканні
-     document.querySelector('.item img').addEventListener('click', function(event) {
-        // Викликаємо файлову систему для вибору нового зображення
-        var fileInput = document.createElement('input');
-        fileInput.type = 'file';
+    // Додаємо обробник події для зміни зображення при натисканні на кожне зображення
+    document.querySelectorAll('.item img').forEach(function(img) {
+        img.addEventListener('click', function(event) {
+            // Викликаємо файлову систему для вибору нового зображення
+            var fileInput = document.createElement('input');
+            fileInput.type = 'file';
 
-        // Додаємо обробник події 'change', який викликається при виборі файлу
-        fileInput.addEventListener('change', function() {
-            // Отримуємо вибраний файл
-            var file = this.files[0];
-            var formData = new FormData(); // Створюємо об'єкт FormData для передачі файлу
+            // Додаємо обробник події 'change', який викликається при виборі файлу
+            fileInput.addEventListener('change', function() {
+                // Отримуємо вибраний файл
+                var file = this.files[0];
+                var formData = new FormData(); // Створюємо об'єкт FormData для передачі файлу
 
-        formData.append('file', file); // Додаємо файл до FormData
+                formData.append('file', file); // Додаємо файл до FormData
 
-    //     fetch('url_для_завантаження_зображення', {
-    //         method: 'POST',
-    //         body: formData
-    //     })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         // Встановлюємо src атрибут фото на базі URL зображення з сервера
-    //         document.querySelector('.item img').src = data.filePath; // Припустимо, що сервер повертає шлях до збереженого зображення
-    //     })
-    //     .catch(error => {
-    //         console.error('Error:', error);
-    //     });
+                fetch('url_для_завантаження_зображення', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Встановлюємо src атрибут фото на базі URL зображення з сервера
+                    img.src = data.filePath; // Припустимо, що сервер повертає шлях до збереженого зображення
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+
+            fileInput.click();
+        });
     });
-
-    fileInput.click();
-});
      // Отримуємо всі посилання з класом linkA на сторінці
 var links = document.querySelectorAll('a.linkA');
 
@@ -675,28 +697,28 @@ if (editedLinkFile) {
     $('#editLinkModal').modal('hide');
     // Отправка данных на сервер методом PUT з updatedData
 }
-// // Функція для отримання інформації про блок
-// function getBlockInfo(block, blockCounter) {
-//     let blockInfo = null;
+// Функція для отримання інформації про блок
+function getBlockInfo(block, blockCounter) {
+    let blockInfo = null;
 
-//     if (block.classList.contains('layoutIT')) {
-//         blockInfo = {
-//             blockCounter: blockCounter,
-//             image: block.querySelector('img').src,
-//             text: block.textContent.trim()
-//         };
-//     } else if (block.classList.contains('layoutT')) {
-//         blockInfo = {
-//             blockCounter: blockCounter,
-//             text: block.textContent.trim()
-//         };
-//     } else if (block.classList.contains('layoutTL')) {
-//         blockInfo = {
-//             blockCounter: blockCounter,
-//             text: block.querySelector('p').textContent.trim(),
-//             link: block.querySelector('a').getAttribute('href')
-//         };
-//     }
+    if (block.classList.contains('layoutIT')) {
+        blockInfo = {
+            blockCounter: blockCounter,
+            image: block.querySelector('img').src,
+            text: block.textContent.trim()
+        };
+    } else if (block.classList.contains('layoutT')) {
+        blockInfo = {
+            blockCounter: blockCounter,
+            text: block.textContent.trim()
+        };
+    } else if (block.classList.contains('layoutTL')) {
+        blockInfo = {
+            blockCounter: blockCounter,
+            text: block.querySelector('p').textContent.trim(),
+            link: block.querySelector('a').getAttribute('href')
+        };
+    }
     // } else if (block.classList.contains('tabName') || block.classList.contains('tabItems')) {
     //     blockInfo = {
     //         tabCounter: block.getAttribute('tabCounter'),
@@ -710,51 +732,51 @@ if (editedLinkFile) {
     //     };
     // }
 
-//     // Перевірка на null і додавання "-" для незміненої інформації
-//     if (blockInfo !== null) {
-//         for (const key in blockInfo) {
-//             if (blockInfo[key] === "") {
-//                 blockInfo[key] = "—";
-//             }
-//         }
-//     }
+    // Перевірка на null і додавання "-" для незміненої інформації
+    if (blockInfo !== null) {
+        for (const key in blockInfo) {
+            if (blockInfo[key] === "") {
+                blockInfo[key] = "—";
+            }
+        }
+    }
 
-//     return blockInfo;
-// }
+    return blockInfo;
+}
 
-// // Функція для відправки даних про блок на сервер методом PUT
-// function sendPutRequest(data) {
-//     fetch('url_для_вашого_сервера', {
-//         method: 'PUT',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(data)
-//     })
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//         return response.json();
-//     })
-//     .then(data => {
-//         console.log('Success:', data);
-//     })
-//     .catch(error => {
-//         console.error('Error:', error);
-//     });
-// }
+// Функція для відправки даних про блок на сервер методом PUT
+function sendPutRequest(data) {
+    fetch('url_для_вашого_сервера', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
 
-// items.forEach(function(item) {
-//     var blockCounter = item.getAttribute('blockCounter');
-//     var blockInfo = getBlockInfo(item, blockCounter); // Отримуємо інформацію про блок за допомогою функції getBlockInfo
+items.forEach(function(item) {
+    var blockCounter = item.getAttribute('blockCounter');
+    var blockInfo = getBlockInfo(item, blockCounter); // Отримуємо інформацію про блок за допомогою функції getBlockInfo
 
-//     // Перевіряємо, чи є інформація про блок
-//     if (blockInfo !== null) {
-//         // Відправляємо дані про блок на сервер методом PUT
-//         sendPutRequest(blockInfo);
-//     }
-// });
+    // Перевіряємо, чи є інформація про блок
+    if (blockInfo !== null) {
+        // Відправляємо дані про блок на сервер методом PUT
+        sendPutRequest(blockInfo);
+    }
+});
             
         });
     }
