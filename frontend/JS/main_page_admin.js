@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
         overlay.remove();
       });
     }
+    
 
     // ВКЛАДИНКИ --------------------------------------------------------------------------------------------------------------------------------------------------------------
     
@@ -545,6 +546,7 @@ deleteButton.addEventListener("click", function() {
     // };
 
     // sendDeleteRequest(dataToDelete);
+   
 });
 
 // РЕДАГУВАННЯ -------------------------------------------------------------------------------------------------------------------------------------------
@@ -581,8 +583,7 @@ document.getElementById("changeButton").addEventListener("click", function() {
                             'bold',
                             'italic',
                             '|',
-                            'alignment',
-                            '|',
+                            
                             'bulletedList',
                             'numberedList',
                             '|',

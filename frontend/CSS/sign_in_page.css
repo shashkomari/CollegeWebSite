@@ -40,4 +40,10 @@ body {
 .btn-custom.focus {
     box-shadow: 0 0 0 0.2rem #750014(0, 123, 255, 0.5);
 }
-
+.password-toggle {
+    cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+}

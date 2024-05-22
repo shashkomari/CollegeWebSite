@@ -1,7 +1,11 @@
 .navbar {
-    background-color: #750014; 
-    /* height: 100px; */
-  }
+  position: fixed; /* Робимо навбар фіксованим */
+  top: 0; /* Розміщуємо його у верхній частині екрану */
+  left: 0;
+  right: 0; /* Розтягуємо навбар на всю ширину екрану */
+  z-index: 1000; /* Задаємо високий z-index, щоб навбар був поверх інших елементів */
+  background-color: #750014; 
+}
   
   .navbar-nav .nav-link {
     color: #fff; 
@@ -85,4 +89,58 @@
     margin-left: auto;
 }
 
-  
+.custom-margin {
+  margin-bottom: 10px; /* Встановіть необхідний відступ */
+}
+.custom-map {
+  margin-top: 10px; /* Встановіть необхідний верхній відступ для карти */
+}
+.bg-light {
+  background-color: #dddddde6; /* Сірий фон */
+  border-radius: 10px; /* Заокруглені краї */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4); /* Тінь */
+  padding: 15px; /* Відступи від країв блоку */
+  width: auto; /* Автоматична ширина відповідно до вмісту */
+  max-width: 100%; /* Максимальна ширина, щоб не виходило за межі екрану */
+  height: auto; /* Автоматична висота відповідно до вмісту */
+  margin-bottom: 15px; /* Відступ між блоками */
+  display: flex; /* Використовуємо flexbox */
+  /* align-items: center; Вирівнюємо елементи вертикально */
+  justify-content: center; /* Вирівнюємо елементи горизонтально */
+}
+.full-screen-image {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.full-screen-image::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/static/RESOURCES/KISIT_MAIN.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  filter: blur(4px);
+  opacity: 1; /* Затемнюємо фон */
+  z-index: -1;
+}
+
+.full-screen-image h2 {
+  position: relative;
+  z-index: 1; /* Задаємо змісту більший z-index, щоб він відображався поверх фону */
+  font-size: 36px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+
+
+

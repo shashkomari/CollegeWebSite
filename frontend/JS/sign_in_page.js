@@ -37,6 +37,22 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
             getData();
            })
             .catch(error => {
-            console.error('There was an error!', error);
+              console.error('There was an error!', error);
+              // Показати повідомлення про помилку користувачеві
+              var errorMessage = document.getElementById('errorMessage');
+              errorMessage.textContent = 'Помилка авторизації. Перевірте ваші дані та спробуйте ще раз.';
+              errorMessage.style.display = 'block';
+            
             });
     });
+    document.getElementById('togglePassword').addEventListener('click', function() {
+      var passwordField = document.getElementById('password');
+      var passwordFieldType = passwordField.getAttribute('type');
+      if (passwordFieldType === 'password') {
+          passwordField.setAttribute('type', 'text');
+          this.querySelector('img').src = 'https://img.icons8.com/ios-glyphs/30/000000/invisible.png';
+      } else {
+          passwordField.setAttribute('type', 'password');
+          this.querySelector('img').src = 'https://img.icons8.com/ios-glyphs/30/000000/visible.png';
+      }
+  });
