@@ -8,6 +8,32 @@ import (
 	"github.com/shashkomari/CollegeWebSite.git/backend/models"
 )
 
+func (h *HTTP) CreatePage(c *gin.Context) {
+	var page models.CreatePage
+
+	if err := c.BindJSON(&page); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error BindJSON": err.Error(),
+		})
+		return
+	}
+	log.Println(page)
+	id, url, err := h.Service.CreatePage(page)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error h.Service.CreatePage": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"id":  id,
+		"url": url,
+	})
+}
+
 func (h *HTTP) GetPageIdByUrl(c *gin.Context) {
 	var url models.GetPageIdByUrl
 

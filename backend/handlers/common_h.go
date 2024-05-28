@@ -12,12 +12,12 @@ type Service interface {
 	//UpdateAccount()()
 	GetAccount(signIn models.AccountData) (string, error)
 
-	CreateTab(tab models.TabData) (string, string, error)
+	CreateTab(tab models.CreateTab) (string, string, error)
 
-	CreatePage(page models.CreatePageData) (string, string, error)
+	CreatePage(page models.CreatePage) (string, string, error)
 	GetPageIdByUrl(url string) (string, error)
 
-	CreateBlock(block models.BlockData) (string, error)
+	CreateBlock(block models.CreateBlock) (string, error)
 }
 
 func NewHttpHandler(Service Service) *HTTP {

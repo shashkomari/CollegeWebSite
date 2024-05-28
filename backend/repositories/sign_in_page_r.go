@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/shashkomari/CollegeWebSite.git/backend/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -28,7 +27,6 @@ func (r *Repository) GetAccount(email string) (models.AccountData, error) {
 	if err != nil {
 		return models.AccountData{}, fmt.Errorf("failed to get list of accounts: %w", err)
 	}
-	log.Println(account.Password)
 
 	return account, nil
 }

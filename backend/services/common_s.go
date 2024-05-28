@@ -11,10 +11,10 @@ type Repository interface {
 
 	CreateTab(tab string) (string, error)
 
-	CreatePage(page models.CreatePageData, url string) (string, error)
+	CreatePage(page models.DBCreatePage, tabID string) (string, error)
 	GetPageIdByUrl(url string) (string, error)
 
-	CreateBlock(block models.BlockData) (string, error)
+	CreateBlock(block models.DBCreateBlock, pageID string) (string, error)
 }
 
 func NewService(repository Repository) *Service {

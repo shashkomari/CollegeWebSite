@@ -1,6 +1,10 @@
 package models
 
-type TabData struct {
-	Type string `bson:"type"`
+type CreateTab struct {
 	Name string `bson:"name"`
+}
+
+type DBCreateTab struct {
+	Name  string         `bson:"name"`
+	Pages []DBCreatePage `bson:"pages"`
 }

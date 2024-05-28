@@ -20,8 +20,6 @@ func (s *Service) GetAccount(signIn models.AccountData) (string, error) {
 		return "", fmt.Errorf("repository.GetAccount: %w", err)
 	}
 
-	//fmt.Printf("Password: %q", account.Password)
-
 	err = bcrypt.CompareHashAndPassword([]byte(account.Password), []byte(signIn.Password))
 	if err != nil {
 		return "", fmt.Errorf("repository.CompareHashAndPassword: %w", err)

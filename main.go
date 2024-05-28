@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/joho/godotenv"
 	"github.com/shashkomari/CollegeWebSite.git/backend/handlers"
 	"github.com/shashkomari/CollegeWebSite.git/backend/repositories"
 	"github.com/shashkomari/CollegeWebSite.git/backend/services"
@@ -24,6 +25,11 @@ import (
 )
 
 func main() {
+	// Load environment variables from .env file
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
 	conn, err := ConnectToDB()
 	if err != nil {
 		panic(err.Error())
@@ -41,6 +47,7 @@ func main() {
 	handler := handlers.NewHttpHandler(service)
 
 	r.GET("/api/page", handler.GetPageIdByUrl)
+	r.POST("/api/page", handler.CreatePage)
 
 	r.POST("/api/tab", handler.CreateTab)
 
@@ -114,7 +121,6 @@ func verifyTokenExpiration(tokenString string) error {
 	// Парсимо токен
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Здійснюємо перевірку, чи підписований метод правильний
-		log.Println(token.Raw)
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("invalid signing method: %v", token.Header["alg"])
 		}

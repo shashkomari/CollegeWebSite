@@ -9,7 +9,7 @@ import (
 )
 
 func (h *HTTP) CreateTab(c *gin.Context) {
-	var tab models.TabData
+	var tab models.CreateTab
 
 	if err := c.BindJSON(&tab); err != nil {
 		log.Println(err)

@@ -8,20 +8,24 @@ import (
 	"github.com/shashkomari/CollegeWebSite.git/backend/models"
 )
 
-func (s *Service) CreatePage(page models.CreatePageData) (string, string, error) {
-	if page.Name == "" {
+func (s *Service) CreatePage(aboutPage models.CreatePage) (string, string, error) {
+	var page models.DBCreatePage
+	if aboutPage.Name == "" {
 		return "", "", fmt.Errorf("repository.CreatePage: name is empty")
 	}
-	text_for_url := translateUkrainianToEnglish(strings.ToLower(page.Name))
+	text_for_url := translateUkrainianToEnglish(strings.ToLower(aboutPage.Name))
 	text_for_url = regexp.MustCompile("[^a-zA-Zа-яА-Я]").ReplaceAllString(text_for_url, "")
-	url := "http://localhost:8080/" + text_for_url
+	page.URL = "http://localhost:8080/" + text_for_url
 
-	id, err := s.repository.CreatePage(page, url)
+	page.Name = aboutPage.Name
+	page.Blocks = make([]models.DBCreateBlock, 0)
+
+	id, err := s.repository.CreatePage(page, aboutPage.TabID)
 	if err != nil {
-		return id, url, fmt.Errorf("repository.CreatePage: %w", err)
+		return id, page.URL, fmt.Errorf("repository.CreatePage: %w", err)
 	}
 
-	return id, url, nil
+	return id, page.URL, nil
 }
 
 func translateUkrainianToEnglish(ukrainianText string) string {

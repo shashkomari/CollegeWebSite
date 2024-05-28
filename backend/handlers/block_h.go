@@ -9,7 +9,7 @@ import (
 )
 
 func (h *HTTP) CreateBlock(c *gin.Context) {
-	var block models.BlockData
+	var block models.CreateBlock
 
 	if err := c.BindJSON(&block); err != nil {
 		log.Println(err)

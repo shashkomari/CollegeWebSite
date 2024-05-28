@@ -6,7 +6,7 @@ import (
 	"github.com/shashkomari/CollegeWebSite.git/backend/models"
 )
 
-func (s *Service) CreateTab(tab models.TabData) (string, string, error) {
+func (s *Service) CreateTab(tab models.CreateTab) (string, string, error) {
 	if tab.Name == "" {
 		return "", "", fmt.Errorf("services.CreateTab: name is empty")
 	}
@@ -15,8 +15,8 @@ func (s *Service) CreateTab(tab models.TabData) (string, string, error) {
 	if err != nil {
 		return id, "", fmt.Errorf("repository.CreateTab: %w", err)
 	}
-	var page models.CreatePageData
-	page.Name, page.TabName = tab.Name, tab.Name
+	var page models.CreatePage
+	page.Name, page.TabID = tab.Name, id
 	_, page_url, err := s.CreatePage(page)
 	if err != nil {
 		return id, page_url, fmt.Errorf("repository.CreatePage: %w", err)

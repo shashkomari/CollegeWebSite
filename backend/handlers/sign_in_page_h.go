@@ -27,7 +27,6 @@ func (h *HTTP) SignIn(c *gin.Context) {
 		})
 		return
 	}
-	log.Println("token: ", token)
 
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"token": token,
