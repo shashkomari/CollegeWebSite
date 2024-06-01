@@ -1,5 +1,5 @@
 $('.carousel').carousel({
-    interval: 2000  // Інтервал в мілісекундах, наприклад, 2000 мс = 2 сек.
+    interval: 3000  // Інтервал в мілісекундах, наприклад, 2000 мс = 2 сек.
   });
 document.addEventListener('DOMContentLoaded', function () {
     const images = document.querySelectorAll('.img-fluid');

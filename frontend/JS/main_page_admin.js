@@ -1,5 +1,5 @@
 $('.carousel').carousel({
-    interval: 2000  // Інтервал в мілісекундах, наприклад, 2000 мс = 2 сек.
+    interval: 3000  // Інтервал в мілісекундах, наприклад, 2000 мс = 2 сек.
   });
 document.addEventListener('DOMContentLoaded', function () {
    
@@ -143,11 +143,14 @@ fetch('http://localhost:8080/api/tabs', {
     })
 .then(response => response.json())
 .then(data => {
-     // Перебрати отримані дані та відобразити кожну вкладинку у навбарі
-     data.forEach(tab => {
-        const tabId = tab.id;
-        const tabUrl = tab.page_url;
-        const tabName = tab.name;
+    // Дістаємо масив вкладинок з об'єкта "tabs"
+    const tabs = data.tabs;
+
+    // Перебираємо отримані дані та відображаємо кожну вкладинку у навбарі
+    tabs.forEach(tab => {
+        const tabId = tab.ID;
+        const tabUrl = tab.Url;
+        const tabName = tab.Name;
 
         const newTab = document.createElement('li');
         newTab.className = 'nav-item';
@@ -458,7 +461,6 @@ $('#textOptionsModal').modal('hide');
         const layout = document.createElement('div');
         layout.classList.add('layoutIT', 'col-lg-12', 'row', 'align-items-center');
         layout.style.position = 'relative';
-        layout.style.boxSizing = 'border-box';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
         layout.innerHTML = `
@@ -506,7 +508,6 @@ $('#textOptionsModal').modal('hide');
         const layout = document.createElement('div');
         layout.classList.add('layoutT','col-lg-12', 'item', 'editor');
         layout.style.position = 'relative';
-        layout.style.boxSizing = 'border-box';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         layout.innerHTML = `
         <p class="item" style="position: relative;">Це лише приклад. Введіть Ваш текст!</p>
@@ -518,7 +519,6 @@ $('#textOptionsModal').modal('hide');
         const layout = document.createElement('div');
         layout.classList.add('layoutTL','col-lg-12', 'item');
         layout.style.position = 'relative';
-        layout.style.boxSizing = 'border-box';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
         layout.innerHTML = `
@@ -664,41 +664,39 @@ document.getElementById("changeButton").addEventListener("click", function() {
         });
         if (!editorInitialized) { // Перевірка, чи редактор вже ініційований
             var mainEditors = document.querySelectorAll('main .editor');
-             mainEditors.forEach(function(editor, index) {
-            ClassicEditor
-                .create(editor, {
-                    toolbar: {
-                        items: [
-                            'heading',
-                            '|',
-                            'bold',
-                            'italic',
-                            '|',
-                            
-                            'bulletedList',
-                            'numberedList',
-                            '|',
-                            'outdent',
-                            'indent',
-                            '|',
-                            'undo',
-                            'redo'
-                        ]
-                    }
-                })
-                .then(editor => {
-                    // Встановлюємо текст з CKEditor до відповідного елементу
-                    mainItems[index].appendChild(editor.ui.view.editable);
-                    // Додаємо обробник події 'blur' для збереження змін
-                    editor.model.document.on('change:data', () => {
-                        mainItems[index].innerHTML = editor.getData();
+            mainEditors.forEach(function(editorElement, index) {
+                ClassicEditor
+                    .create(editorElement, {
+                        toolbar: {
+                            items: [
+                                'heading',
+                                '|',
+                                'bold',
+                                'italic',
+                                '|',
+                                'bulletedList',
+                                'numberedList',
+                                '|',
+                                'outdent',
+                                'indent',
+                                '|',
+                                'undo',
+                                'redo'
+                            ]
+                        }
+                    })
+                    .then(editorInstance => {
+                        // Додаємо обробник події 'blur' для збереження змін
+                        editorInstance.model.document.on('change:data', () => {
+                            // Отримуємо дані з редактора та оновлюємо вміст відповідного елемента
+                            editorElement.innerHTML = editorInstance.getData();
+                        });
+                    })
+                    .catch(error => {
+                        console.error(error);
                     });
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        });
-    
+            });
+        
             editorInitialized = true; // Позначте, що редактор вже ініційований
         }
 
