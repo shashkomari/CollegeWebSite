@@ -50,7 +50,7 @@ func main() {
 	r.GET("/api/page", handler.GetPageIdByUrl)
 	r.POST("/api/page", handler.CreatePage)
 
-	//r.GET("/api/tabs", handler.GetTabs)
+	r.GET("/api/tabs", handler.GetTabs)
 	r.POST("/api/tab", handler.CreateTab)
 
 	r.GET("/api/blocks", handler.GetBlocks)

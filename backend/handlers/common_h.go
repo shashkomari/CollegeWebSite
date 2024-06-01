@@ -12,7 +12,7 @@ type Service interface {
 	//UpdateAccount()()
 	GetAccount(signIn models.AccountData) (string, error)
 
-	//GetTabs() ([]models.DBCreateTab, error)
+	GetTabs() ([]models.GetTabs, error)
 	CreateTab(tab models.CreateTab) (string, string, error)
 
 	//GetPages(tabId string) ([]models.GetPages, error)

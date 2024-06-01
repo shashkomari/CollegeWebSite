@@ -9,7 +9,7 @@ type Service struct {
 type Repository interface {
 	GetAccount(email string) (models.AccountData, error)
 
-	//GetTabs() ([]models.DBCreateTab, error)
+	GetTabs() ([]models.GetTabs, error)
 	CreateTab(tab string) (string, error)
 
 	//GetPages(tabId string) ([]models.GetPages, error)

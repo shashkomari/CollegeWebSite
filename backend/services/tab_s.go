@@ -24,3 +24,12 @@ func (s *Service) CreateTab(tab models.CreateTab) (string, string, error) {
 
 	return id, page_url, nil
 }
+
+func (s *Service) GetTabs() ([]models.GetTabs, error) {
+	tabs, err := s.repository.GetTabs()
+	if err != nil {
+		return nil, fmt.Errorf("repository.GetTabs: %w", err)
+	}
+
+	return tabs, err
+}

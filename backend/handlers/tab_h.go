@@ -33,3 +33,18 @@ func (h *HTTP) CreateTab(c *gin.Context) {
 		"page_url": page_url,
 	})
 }
+
+func (h *HTTP) GetTabs(c *gin.Context) {
+	tabs, err := h.Service.GetTabs()
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error h.Service.GetTabs": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"tabs": tabs,
+	})
+}
