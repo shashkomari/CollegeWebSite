@@ -7,6 +7,7 @@ import (
 	"github.com/shashkomari/CollegeWebSite.git/backend/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -65,4 +66,43 @@ func (r *Repository) CreateBlock(block models.DBCreateBlock, pageID string) (str
 	// }
 
 	return block.ID.Hex(), nil
+}
+
+func (r *Repository) GetBlocks(pageID string) ([]models.DBCreateBlock, error) {
+	// Convert the pageID string to a MongoDB ObjectID
+	pageObjID, err := primitive.ObjectIDFromHex(pageID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid page ID: %w", err)
+	}
+
+	// Define the collection
+	collection := r.db.Collection("tabs")
+
+	// Define the filter to find the specific page by its ID
+	filter := bson.M{"pages._id": pageObjID}
+
+	// Define the projection to include only the blocks field from the matched page
+	projection := bson.M{"pages.$": 1}
+
+	// Perform the find query with filter and projection
+	var result struct {
+		Pages []struct {
+			Blocks []models.DBCreateBlock `bson:"blocks"`
+		} `bson:"pages"`
+	}
+	err = collection.FindOne(context.TODO(), filter, options.FindOne().SetProjection(projection)).Decode(&result)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, fmt.Errorf("no blocks found for page ID: %s", pageID)
+		}
+		return nil, fmt.Errorf("failed to find blocks: %w", err)
+	}
+
+	// Check if the pages array is empty
+	if len(result.Pages) == 0 {
+		return nil, fmt.Errorf("no blocks found for page ID: %s", pageID)
+	}
+
+	// Return the blocks from the first (and only) page in the result
+	return result.Pages[0].Blocks, nil
 }

@@ -32,3 +32,27 @@ func (h *HTTP) CreateBlock(c *gin.Context) {
 		"id": id,
 	})
 }
+
+func (h *HTTP) GetBlocks(c *gin.Context) {
+	pageId := c.GetHeader("PageID")
+	if pageId == "" {
+		log.Println("GetBlocks: PageID is empty")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error": "GetBlocks: PageID is empty",
+		})
+		return
+	}
+	log.Println(pageId)
+	blocks, err := h.Service.GetBlocks(pageId)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error h.Service.GetBlocks": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"blocks": blocks,
+	})
+}

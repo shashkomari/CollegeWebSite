@@ -56,8 +56,17 @@ func (s *Service) CreateBlock(block models.CreateBlock) (string, error) {
 
 	id, err := s.repository.CreateBlock(blockdata, block.PageId)
 	if err != nil {
-		return id, fmt.Errorf("repository.CreateBlock: %w", err)
+		return "", fmt.Errorf("repository.CreateBlock: %w", err)
 	}
 
 	return id, nil
+}
+
+func (s *Service) GetBlocks(pageId string) ([]models.DBCreateBlock, error) {
+	blocks, err := s.repository.GetBlocks(pageId)
+	if err != nil {
+		return nil, fmt.Errorf("repository.GetBlock: %w", err)
+	}
+
+	return blocks, err
 }

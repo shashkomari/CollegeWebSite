@@ -15,6 +15,11 @@ type GetPageIdByUrl struct {
 	URL string `bson:"url"`
 }
 
+type GetPages struct {
+	ID   primitive.ObjectID `bson:"_id"`
+	Name string             `bson:"name"`
+	URL  string             `bson:"url"`
+}
 type DBCreatePage struct {
 	ID     primitive.ObjectID `bson:"_id"`
 	Name   string             `bson:"name"`

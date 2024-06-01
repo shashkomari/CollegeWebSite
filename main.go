@@ -46,11 +46,14 @@ func main() {
 	service := services.NewService(repository)
 	handler := handlers.NewHttpHandler(service)
 
+	//r.GET("/api/pages", handler.GetPages)
 	r.GET("/api/page", handler.GetPageIdByUrl)
 	r.POST("/api/page", handler.CreatePage)
 
+	//r.GET("/api/tabs", handler.GetTabs)
 	r.POST("/api/tab", handler.CreateTab)
 
+	r.GET("/api/blocks", handler.GetBlocks)
 	r.POST("/api/block", handler.CreateBlock)
 
 	r.POST("/api/sign_in", handler.SignIn)
