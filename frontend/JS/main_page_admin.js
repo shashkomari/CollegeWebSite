@@ -1,5 +1,179 @@
+$('.carousel').carousel({
+    interval: 2000  // Інтервал в мілісекундах, наприклад, 2000 мс = 2 сек.
+  });
 document.addEventListener('DOMContentLoaded', function () {
-    const images = document.querySelectorAll('.img-fluid');
+   
+   // SEARCH--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+const placeholders = ['Новини', 'Коледж', 'Адреса'];
+let currentIndex = 0;
+const searchField = document.getElementById('searchField');
+
+function typeWriter(text, i, fnCallback) {
+    if (i < text.length) {
+        searchField.setAttribute('placeholder', text.substring(0, i + 1));
+        setTimeout(() => {
+            typeWriter(text, i + 1, fnCallback);
+        }, 100);
+    } else if (typeof fnCallback == 'function') {
+        setTimeout(fnCallback, 700);
+    }
+}
+
+function changePlaceholder() {
+    currentIndex = (currentIndex + 1) % placeholders.length;
+    const text = placeholders[currentIndex];
+    typeWriter(text, 0, () => {
+        setTimeout(() => {
+            changePlaceholder();
+        }, 2000);
+    });
+}
+
+changePlaceholder();
+
+
+function clearHighlights() {
+  const highlightedElements = document.querySelectorAll('.highlight');
+  highlightedElements.forEach(element => {
+      const parent = element.parentNode;
+      parent.replaceChild(document.createTextNode(element.textContent), element);
+      parent.normalize();
+  });
+}
+
+function getBackgroundColor(element) {
+  while (element) {
+      const bgColor = window.getComputedStyle(element).backgroundColor;
+      if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+          return bgColor;
+      }
+      element = element.parentElement;
+  }
+  return 'white'; // default background color
+}
+
+function getTextColor(backgroundColor) {
+  const [r, g, b] = backgroundColor.match(/\d+/g).map(Number);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness > 125 ? '#750014' : 'white';
+}
+
+function highlightText(searchText) {
+  clearHighlights();
+
+  if (!searchText) return;
+
+  const regex = new RegExp(searchText, 'gi'); // 'g' for global and 'i' for case insensitive
+  const textNodes = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+
+  while (textNode = textNodes.nextNode()) {
+      const textContent = textNode.nodeValue;
+      if (regex.test(textContent)) {
+          const parentNode = textNode.parentNode;
+          const fragment = document.createDocumentFragment();
+
+          let lastIndex = 0;
+          textContent.replace(regex, (match, index) => {
+              fragment.appendChild(document.createTextNode(textContent.slice(lastIndex, index)));
+              const span = document.createElement('span');
+              span.classList.add('highlight');
+              span.textContent = match;
+
+              const backgroundColor = getBackgroundColor(parentNode);
+              span.style.textDecorationColor = getTextColor(backgroundColor);
+
+              fragment.appendChild(span);
+              lastIndex = index + match.length;
+          });
+          fragment.appendChild(document.createTextNode(textContent.slice(lastIndex)));
+          parentNode.replaceChild(fragment, textNode);
+      }
+  }
+}
+
+document.getElementById("searchField").addEventListener("keyup", function(event) {
+  if (event.key === "Enter") {
+      const searchText = event.target.value.trim();
+      highlightText(searchText);
+  }
+});
+
+//MAIN--------------------------------------------------------------------------------------------------------------------------------------------------------------
+window.addEventListener("scroll", revealOnScroll);
+
+    function revealOnScroll() {
+        var reveals = document.querySelectorAll('.hidden');
+        for (var i = 0; i < reveals.length; i++) {
+            var windowHeight = window.innerHeight;
+            var revealTop = reveals[i].getBoundingClientRect().top;
+            var revealPoint = 50;
+
+            if (revealTop < windowHeight - revealPoint) {
+                reveals[i].classList.add('active');
+            } else {
+                reveals[i].classList.remove('active'); // Remove the 'active' class if element is not in view
+            }
+        }
+    }
+
+    revealOnScroll();
+
+    
+
+   //SIDEBAR----------------------------------------------------------------------------------------------------------------------------------------------------------------
+    const sidebar1 = document.querySelector('.sidebar');
+    const fullScreenImage = document.querySelector('.full-screen-image');
+    const offset = 100; // Налаштування відступу в пікселях
+
+    window.addEventListener('scroll', () => {
+        const imageBottom = fullScreenImage.getBoundingClientRect().bottom;
+        if (imageBottom <= offset) {
+            sidebar1.classList.remove('hidden');
+        } else {
+            sidebar1.classList.add('hidden');
+        }
+    });
+    // ВЗЯТТЯ ВСІЄЇ ІНФОРМАЦІЇ З СЕРВЕРУ --------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Отримати дані про всі вкладинки з сервера за допомогою методу GET
+fetch('http://localhost:8080/api/tabs', {
+    method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+.then(response => response.json())
+.then(data => {
+     // Перебрати отримані дані та відобразити кожну вкладинку у навбарі
+     data.forEach(tab => {
+        const tabId = tab.id;
+        const tabUrl = tab.page_url;
+        const tabName = tab.name;
+
+        const newTab = document.createElement('li');
+        newTab.className = 'nav-item';
+        newTab.innerHTML = `
+            <a class="nav-link item tabName" style="position: relative; color: white;" href="${tabUrl}" tabCounter="${tabId}">
+                ${tabName}
+            </a>
+        `;
+
+        const navbarNav = document.querySelector('.navbar-nav');
+        navbarNav.appendChild(newTab);
+
+        // Знаходимо батьківський елемент кнопки "+"
+        const addTabButton = document.querySelector('.nav-item:last-child');
+
+        // Вставка нової вкладинки перед кнопкою "+"
+        addTabButton.parentNode.insertBefore(newTab, addTabButton);
+    });
+})
+.catch(error => {
+    console.error('Помилка отримання вкладинок з сервера:', error);
+});
+
+//ЗОБРАЖЕННЯ(МОДУЛЬНЕ ВІКНО) --------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+const images = document.querySelectorAll('.img-fluid');
   
     images.forEach(image => {
       image.addEventListener('click', function () {
@@ -31,7 +205,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }
     
-
+     
     // ВКЛАДИНКИ --------------------------------------------------------------------------------------------------------------------------------------------------------------
     
     const addTabForm = document.getElementById('addTabForm');
@@ -68,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const newTab = document.createElement('li');
     newTab.className = 'nav-item';
     newTab.innerHTML = `
-        <a class="nav-link item tabName" style="position: relative;" href="${tabUrl}" tabCounter="${tabId}">
+        <a class="nav-link item tabName" style="position: relative; color: white;" href="${tabUrl}" tabCounter="${tabId}">
             ${tabName}
         </a>
     `;
@@ -193,14 +367,14 @@ function getPageIdFromServer() {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Url' : currentUrl.href
+            'URL' : currentUrl.href
         }
     })
     .then(response => response.json())
     .then(data => {
-        const pageId = data.id; // Отриманий ідентифікатор сторінки (pageId)
+        const pageId = data.id; // Retrieved page identifier (pageId)
 
-        // Отримуємо інформацію про блоки
+        // Get block information
         const layout1Blocks = document.querySelectorAll('.layoutIT');
         const layout2Blocks = document.querySelectorAll('.layoutT');
         const layout3Blocks = document.querySelectorAll('.layoutTL');
@@ -208,37 +382,33 @@ function getPageIdFromServer() {
 
         layout1Blocks.forEach((block) => {
             const blockInfo = getBlockInfo(block, pageId);
-            if (blockInfo) {
-                blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
-                // Відправляємо блок на сервер
-                sendBlockInfo(blockInfo);
+            if (blockInfo && !block.hasAttribute('blockSent')) {
+                blockInfo.block = block; // Add block property to blockInfo object
+                sendBlockInfo(blockInfo); // Send block info to the server
             }
         });
 
         layout2Blocks.forEach((block) => {
             const blockInfo = getBlockInfo(block, pageId);
-            if (blockInfo) {
-                blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
-                // Відправляємо блок на сервер
-                sendBlockInfo(blockInfo);
+            if (blockInfo && !block.hasAttribute('blockSent')) {
+                blockInfo.block = block; // Add block property to blockInfo object
+                sendBlockInfo(blockInfo); // Send block info to the server
             }
         });
 
         layout3Blocks.forEach((block) => {
             const blockInfo = getBlockInfo(block, pageId);
-            if (blockInfo) {
-                blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
-                // Відправляємо блок на сервер
-                sendBlockInfo(blockInfo);
+            if (blockInfo && !block.hasAttribute('blockSent')) {
+                blockInfo.block = block; // Add block property to blockInfo object
+                sendBlockInfo(blockInfo); // Send block info to the server
             }
         });
 
         layoutLink.forEach((block) => {
             const blockInfo = getBlockInfo(block, pageId);
-            if (blockInfo) {
-                blockInfo.block = block; // Додаємо властивість block до об'єкту blockInfo
-                // Відправляємо блок на сервер
-                sendBlockInfo(blockInfo);
+            if (blockInfo && !block.hasAttribute('blockSent')) {
+                blockInfo.block = block; // Add block property to blockInfo object
+                sendBlockInfo(blockInfo); // Send block info to the server
             }
         });
     })
@@ -262,16 +432,14 @@ function sendBlockInfo(blockInfo) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log('Відповідь від сервера з інформацією про блок:', data);
-// Перевіряємо наявність блоку перед встановленням атрибуту
-if (blockInfo.block) {
-    // При отриманні відповіді з id блоку від сервера
-    const blockIdFromServer = data.id; // Припустимо, що це id блоку отримане з сервера
+        console.log('Server response with block information:', data);
 
-    // Присвоюємо значення blockCounter для блоку
-    blockInfo.block.setAttribute('blockCounter', blockIdFromServer);
-}
-
+        // Check if the block exists before setting the attribute
+        if (blockInfo.block) {
+            const blockIdFromServer = data.id; // Assuming this is the block id from the server
+            blockInfo.block.setAttribute('blockCounter', blockIdFromServer); // Assign blockCounter value to the block
+            blockInfo.block.setAttribute('blockSent', true); // Mark the block as sent
+        }
     })
     .catch(error => {
         console.error('Помилка при відправці блоку:', error);
@@ -288,8 +456,9 @@ $('#textOptionsModal').modal('hide');
     // Function to create layouts
     function createLayout1() {
         const layout = document.createElement('div');
-        layout.classList.add('layoutIT', 'row', 'align-items-center');
+        layout.classList.add('layoutIT', 'col-lg-12', 'row', 'align-items-center');
         layout.style.position = 'relative';
+        layout.style.boxSizing = 'border-box';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
         layout.innerHTML = `
@@ -335,22 +504,26 @@ $('#textOptionsModal').modal('hide');
 
     function createLayout2() {
         const layout = document.createElement('div');
-        layout.classList.add('layoutT','mt-4', 'item', 'editor');
+        layout.classList.add('layoutT','col-lg-12', 'item', 'editor');
         layout.style.position = 'relative';
+        layout.style.boxSizing = 'border-box';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
-        // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
-        layout.innerHTML = `<p class="item" style="position: relative;">Це лише приклад. Введіть Ваш текст!</p>`;
+        layout.innerHTML = `
+        <p class="item" style="position: relative;">Це лише приклад. Введіть Ваш текст!</p>
+        `;
         return layout;
     }
 
     function createLayout3() {
         const layout = document.createElement('div');
-        layout.classList.add('layoutTL','mt-4', 'item');
+        layout.classList.add('layoutTL','col-lg-12', 'item');
         layout.style.position = 'relative';
+        layout.style.boxSizing = 'border-box';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
         layout.innerHTML = `
-        <div class="editor"
+       
+        <div class="editor">
             <p class="item" style="position: relative;">Це лише приклад. Введіть Ваш текст та посилання!</p>
         </div>
         <div>
@@ -376,131 +549,31 @@ $('#textOptionsModal').modal('hide');
     }
 
 
-// // Функція для завантаження вкладинок з сервера
-// function loadTabsFromServer() {
-//     fetch('url/для/запиту/вкладинок')
-//       .then(response => response.json())
-//       .then(data => {
-//         // Отримано дані про вкладинки з сервера
-//         const tabsSelect = document.getElementById('existingTabs');
-  
-//         // Очищаємо випадаючий список
-//         tabsSelect.innerHTML = '';
-  
-//         // Додаємо опції для кожної вкладинки
-//         data.forEach(tab => {
-//           const option = document.createElement('option');
-//           option.value = tab.id; // Припустимо, що вкладинки мають поле id
-//           option.textContent = tab.name; // Припустимо, що вкладинки мають поле name
-//           tabsSelect.appendChild(option);
-//         });
-//       })
-//       .catch(error => {
-//         console.error('Помилка при завантаженні вкладинок:', error);
-//       });
-//   }
-  
-//   // Функція для відправлення нової підвкладинки на сервер
-//   function saveSubTabToServer(subTabData) {
-//     fetch('url/для/збереження/підвкладинки', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json'
-//       },
-//       body: JSON.stringify(subTabData)
-//     })
-//     .then(response => {
-//       if (!response.ok) {
-//         throw new Error('Помилка при відправленні підвкладинки');
-//       }
-//       return response.json();
-//     })
-//     .then(data => {
-//         console.log('Підвкладинка успішно збережена:', data);
-//         // Додаткові дії після успішного збереження
-//         handleSubTabData(data); // Додавання підвкладинки до навбару
-//     })
-//     .catch(error => {
-//         console.error('Помилка при збереженні підвкладинки:', error);
-//     });
-    
-//   }
-//   // Функція для додавання підвкладинок до вкладинки в навбарі
-// function addSubTabToNavbar(tabId, subTabName) {
-//     // Знайдемо елемент в навбарі зі співпадаючим tabId
-//     const tabItems = document.querySelectorAll('.tabItems');
-//     tabItems.forEach(item => {
-//         if (item.getAttribute('tabCounter') === tabId) {
-//             // Створимо новий пункт меню для підвкладинки
-//             const subTabItem = document.createElement('a');
-//             subTabItem.classList.add('dropdown-item', 'item');
-//             subTabItem.setAttribute('style', 'position: relative;');
-//             subTabItem.textContent = subTabName;
-//             item.nextElementSibling.appendChild(subTabItem);
-//         }
-//     });
-// }
-
-// // Приймаємо дані підвкладинки та додаємо їх до навбару
-// function handleSubTabData(data) {
-//     // Отримання даних про вкладинку та підвкладинку
-//     const tabId = data.tabId;
-//     const subTabName = data.name;
-
-//     // Додаємо підвкладинку до відповідної вкладинки в навбарі
-//     addSubTabToNavbar(tabId, subTabName);
-// }
-
-//   // Прослуховування події кліку на кнопку "Зберегти" у формі
-//   document.getElementById('saveSubTab').addEventListener('click', function(event) {
-//     event.preventDefault();
-  
-//     // Отримання даних форми
-//     const existingTabId = document.getElementById('existingTabs').value;
-//     const subTabTitle = document.getElementById('subTabTitle').value;
-  
-//     // Формування об'єкта з даними підвкладинки
-//     const subTabData = {
-//       tabId: existingTabId,
-//       name: subTabTitle,
-//     };
-  
-//     // Відправлення даних на сервер
-//     saveSubTabToServer(subTabData);
-//     $('#addSubTabModal').modal('hide');
-//   });
-  
-//   // Завантаження вкладинок з сервера при завантаженні сторінки
-//   window.addEventListener('load', function() {
-//     loadTabsFromServer();
-//   });
-
-    // function sendDeleteRequest(data) {
-        
-
-    //     fetch('url_для_вашого_сервера', {
-    //         method: 'DELETE',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(data)
-    //     })
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error('Network response was not ok');
-    //         }
-    //         return response.json();
-    //     })
-    //     .then(data => {
-    //         console.log('Success:', data);
-    //     })
-    //     .catch(error => {
-    //         console.error('Error:', error);
-    //     });
-    // }
-
     // ВИДАЛЕННЯ ---------------------------------------------------------------------------------------------------------------------------------------------
     
+    // Function to get pageId from server
+function getPageId() {
+    let currentUrl = new URL(window.location.href); // Create URL object from current URL
+
+    // Remove everything after the question mark (?)
+    currentUrl.search = '';
+
+    // Send GET request to server to get pageId
+    fetch('http://localhost:8080/api/page', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Url': currentUrl.href
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+       return data.id;     
+    })
+    .catch(error => {
+        console.error('Error getting pageId:', error);
+    });
+}
 // Отримати кнопку "Видалити" за її ID
 var deleteButton = document.getElementById("deleteButton");
 
@@ -523,29 +596,47 @@ deleteButton.addEventListener("click", function() {
 
             // Якщо користувач підтвердив видалення
             if (confirmDelete) {
-                // var itemTabCounter = item.getAttribute("tabCounter");
-                // var itemBlockCounter = item.getAttribute("blockCounter");
-                // var itemImageSrc = item.querySelector("img"); // Отримати посилання на зображення
-                
+              // Get the pageId asynchronously
+              getPageId().then(pageId => {
+                // Determine if the item is a tab or a block and create the data to send
+                var dataToDelete = {};
 
-               
+                if (item.classList.contains('tabName')) {
+                    // Handle tab deletion
+                    const tabId = item.getAttribute('tabCounter');
+                    dataToDelete = { id: tabId };
+                } else {
+                    // Handle block deletion
+                    const blockId = item.getAttribute('blockCounter');
+                    dataToDelete = { pageId: pageId, blockId: blockId };
+                }
+
+                // Send the data to the server for deletion
+                deleteItem(dataToDelete);
 
                 item.remove(); // Видалити елемент
-
-                // itemsToDelete.push({
-                //     tabCounter: itemTabCounter,
-                //     blockCounter: itemBlockCounter,
-                //     imageSrc: itemImageSrc
-                // });
-            }
+            });
+        }
         });
     });
 
-    // var dataToDelete = {
-    //     items: itemsToDelete
-    // };
-
-    // sendDeleteRequest(dataToDelete);
+    function deleteItem(dataToDelete) {
+        fetch('http://localhost:8080/api/delete', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dataToDelete)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Item deleted:', data);
+        })
+        .catch(error => {
+            console.error('Error deleting item:', error);
+        });
+    }
+   
    
 });
 
@@ -714,25 +805,31 @@ function getBlockInfo(block, blockCounter) {
             text: block.textContent.trim()
         };
     } else if (block.classList.contains('layoutTL')) {
+        let linkElement = block.querySelector('a');
         blockInfo = {
             blockCounter: blockCounter,
             text: block.querySelector('p').textContent.trim(),
-            link: block.querySelector('a').getAttribute('href')
+            link: linkElement.getAttribute('href'),
+            linkText: linkElement.textContent.trim(),
+        };
+    // // }
+    // } else if (block.classList.contains('tabName') || block.classList.contains('tabItems')) {
+    } else if (block.classList.contains('tabName')) {
+        blockInfo = {
+            tabCounter: block.getAttribute('tabCounter'),
+            tabName: block.querySelector('.tabName').textContent.trim(),
+            // TabItems: block.querySelector('.tabItems').textContent.trim()
+        };
+    } else if (block.classList.contains('linK')) {
+        let linkElement = block.querySelector('a');
+        blockInfo = {
+            blockCounter: blockCounter,
+            link: linkElement.getAttribute('href'),
+            linkText: linkElement.textContent.trim(),
         };
     }
-    // } else if (block.classList.contains('tabName') || block.classList.contains('tabItems')) {
-    //     blockInfo = {
-    //         tabCounter: block.getAttribute('tabCounter'),
-    //         TabName: block.querySelector('.tabName').textContent.trim(),
-    //         TabItems: block.querySelector('.tabItems').textContent.trim()
-    //     };
-    // } else if (block.classList.contains('linK')) {
-    //     blockInfo = {
-    //         blockCounter: blockCounter,
-    //         Link: block.querySelector('a').getAttribute('href')
-    //     };
-    // }
 
+   
     // Перевірка на null і додавання "-" для незміненої інформації
     if (blockInfo !== null) {
         for (const key in blockInfo) {
