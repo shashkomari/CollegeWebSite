@@ -6,7 +6,10 @@
   z-index: 1000; /* Задаємо високий z-index, щоб навбар був поверх інших елементів */
   background-color: #750014; 
 }
-  
+.nav-item{
+
+  font-size: 1.1em;
+}
   .navbar-nav .nav-link {
     color: #fff; 
     font-size: 1em; /* Наприклад, 1.2 em */
@@ -35,85 +38,196 @@
     font-size: 0.9em; /* Задаємо мінімальну ширину випадаючого списку */
   }
 
-
   body {
     font-size: 1.2em; /* Змініть розмір тексту за необхідністю */
 }
-  h2{
-  font-size: 1.2em;
+  h3 {
+    font-family: 'Roboto';
+  font-size: 2em;
+}
+/* CSS для налаштування розмірів каруселі */
+#collegeCarousel {
+   /* width: 75vh;
+   height: 50vh;  */
+   width: 70%;
+   height: 58%; 
+  margin: auto; /* Центруємо карусель на сторінці */
+  overflow: hidden; /* Забороняємо виходження зображення за межі каруселі */
+}
+/* CSS для налаштування максимальної ширини і висоти для зображень в каруселі */
+#collegeCarousel .carousel-item img {
+  width:70%; 
+  height: 58%;  
+  margin: auto; /* Вирівнюємо по центру */
+  display: block; /* Забезпечуємо правильне відображення як блочного елемента */
+  
+}
+/* CSS для центрування елементів управління */
+.carousel-control-prev, .carousel-control-next {
+  width: 5%; /* Задайте ширину елементів управління */
+  height:30px;
+  top:50%;
+  background-color: #750014;
 }
 .footer {
-    background-color: #750014; 
-    color: #fff; 
-    font-size: 16px;
-  }
-  
-  .footer a {
-    color: #fff; 
-  }
-  
-  .footer a:hover {
-    color: #ccc; 
-  }
-  .text-muted {
-    color: #fff; 
-    margin-left: 14px;
-  }
- 
-  .image-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  .col-lg-4 img {
-    margin-bottom: 15px; /* Змініть розмір відступу за необхідності */
+  background-color: #750014; 
+  color: #fff; 
+  font-size: 16px;
 }
-  
-  .modal-img {
-    width: 40em;
-    height: 30em;
-    /* border: 1px solid #fff; Optional: Add a border to the image */
-    /* box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); Optional: Add a box shadow for aesthetics */
-  }
-  .container-fluid {
-    padding-right: 15px;
-    padding-left: 15px;
-    margin-right: auto;
-    margin-left: auto;
+
+.footer a {
+  color: #fff; 
+}
+
+.footer a:hover {
+  color: #ccc; 
+}
+.text-muted {
+  color: #fff; 
+  margin-left: 14px;
+}
+
+.image-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.col-lg-4 img {
+  margin-bottom: 15px; /* Змініть розмір відступу за необхідності */
+}
+
+.modal-img {
+  width: 40em;
+  height: 30em;
+  /* border: 1px solid #fff; Optional: Add a border to the image */
+  /* box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); Optional: Add a box shadow for aesthetics */
+}
+.container-fluid {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .custom-margin {
-  margin-bottom: 10px; /* Встановіть необхідний відступ */
+margin-bottom: 10px; /* Встановіть необхідний відступ */
 }
 .custom-map {
-  margin-top: 10px; /* Встановіть необхідний верхній відступ для карти */
+margin-top: 10px; /* Встановіть необхідний верхній відступ для карти */
 }
 .bg-light {
-  background-color: #dddddde6; /* Сірий фон */
-  border-radius: 10px; /* Заокруглені краї */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.4); /* Тінь */
-  padding: 15px; /* Відступи від країв блоку */
-  width: auto; /* Автоматична ширина відповідно до вмісту */
-  max-width: 100%; /* Максимальна ширина, щоб не виходило за межі екрану */
-  height: auto; /* Автоматична висота відповідно до вмісту */
-  margin-bottom: 15px; /* Відступ між блоками */
-  display: flex; /* Використовуємо flexbox */
-  /* align-items: center; Вирівнюємо елементи вертикально */
-  justify-content: center; /* Вирівнюємо елементи горизонтально */
+background-color: #dddddde6; /* Сірий фон */
+border-radius: 10px; /* Заокруглені краї */
+box-shadow: 0 4px 8px rgba(0,0,0,0.4); /* Тінь */
+padding: 15px; /* Відступи від країв блоку */
+width: auto; /* Автоматична ширина відповідно до вмісту */
+max-width: 100%; /* Максимальна ширина, щоб не виходило за межі екрану */
+height: auto; /* Автоматична висота відповідно до вмісту */
+margin-bottom: 15px; /* Відступ між блоками */
+/* margin-left: 15px;
+  margin-right: 15px; */
+display: flex; /* Використовуємо flexbox */
+display: flex; /* Використовуємо flexbox */
+flex-direction: column; /* Додаємо для колонки */
+justify-content: flex-start; /* Вирівнюємо елементи на початку */
+/* justify-content: center; Вирівнюємо елементи горизонтально *//
+}
+
+@media (max-width: 992px) {
+.bg-light{
+  margin-left: 15px;
+  margin-right: 15px;
+}
+}
+.search-box {
+display: block;
+position: relative; 
+border-radius: 5px;
+padding: 8px;
+box-shadow: 0px 4px 6px rgba(117, 0, 20, 0.7); /* додаємо тінь */
+}
+
+.search-box input[type="text"] {
+border: none;
+outline: none;
+width: 100%;
+background: transparent;
+}
+
+.search-box input[type="text"]:focus {
+outline: none;
+}
+
+.search-box .fa-search {
+position: absolute;
+left: 10px;
+top: 50%;
+transform: translateY(-50%);
+color: #750014;
+}
+
+.search-box input {
+padding-left: 30px; /* Відступ для іконки */
+}
+.fadeInOut {
+animation: fadeInOut 1s ease-in-out forwards;
+}
+
+@keyframes fadeInOut {
+0% { opacity: 0; }
+100% { opacity: 1; }
+}
+
+.search-box {
+overflow: hidden;
+}
+
+.form-control {
+border: none;
+outline: none;
+background: transparent;
+font-size: inherit;
+width: 100%;
+}
+.highlight {
+text-decoration: underline;
+text-decoration-thickness: 2px;
+}
+
+.sideContent ul {
+list-style-type: none;
+padding-left: 0;
+}
+
+.sideContent li {
+margin-bottom: 5px; /* Додаємо трохи відступу між елементами списку */
+}
+
+.sideContent a {
+text-decoration: none; /* Вилучаємо підкреслення */
+color: #750014; /* Змінюємо колір тексту на чорний */
+cursor: default; /* Вказівник не змінюється */
+}
+
+.sideContent a:hover {
+text-decoration: underline; /* Підкреслення при наведенні */
 }
 .full-screen-image {
   position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
+  z-index: 1;
+  margin-top: 30px; /* Збільшуємо місце для сайдбару після фото */
 }
+
 
 .full-screen-image::before {
   content: '';
@@ -122,25 +236,212 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('/static/RESOURCES/KISIT_MAIN.png');
+  background-image: url('/static/RESOURCES/ФКІСІТ_КНЕУ.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  filter: blur(4px);
+  filter: blur(0.5px);
   opacity: 1; /* Затемнюємо фон */
-  z-index: -1;
+  z-index: 0;
 }
 
 .full-screen-image h2 {
   position: relative;
-  z-index: 1; /* Задаємо змісту більший z-index, щоб він відображався поверх фону */
+  z-index: 10; /* Задаємо змісту більший z-index, щоб він відображався поверх фону */
   font-size: 36px;
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(117, 0, 20, 0.3);
   border-radius: 10px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 
 
+.col-lg-3 {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.mt-4 {
+  margin-top: 1rem !important; /* Встановлюємо менший відступ зверху */
+}
 
+.search-block {
+  margin-top: 10px !important; /* Прибираємо зайвий відступ зверху */
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 30px;
+}
+.sideContent{
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+
+.input-group-append {
+  display: flex;
+}
+.input-group.mb-3 {
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.mainLink {
+  list-style: none; /* відключення звичайного маркера списку */
+  padding: 0;
+  font-family: 'Roboto', sans-serif; 
+}
+
+.mainLink li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+
+.mainLink li::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 2px;
+  /* background-color: blue; */
+  /* Визначаємо товщину лінії */
+  border-bottom: 2px solid #750014;
+}
+.mainLink li::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid #750014;
+  border-right: 2px solid #750014;
+  transform: rotate(45deg);
+  animation: blink 2s infinite; /* анімація */
+}
+ /* Створення стилів для заголовка */
+ h1 {
+/* margin-left: 380px; */
+  text-align: left; /* текст посередині */
+  font-family: 'Roboto', sans-serif; /* використання цікавого шрифту */
+  font-size: 50px; /* збільшення розміру шрифту */
+  color: #750014; /* колір тексту */
+  text-transform: uppercase; /* перетворення тексту у верхній регістр */
+  margin-top: 30px; /* відступ зверху */
+  margin-bottom: 30px;
+}
+.hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.hidden.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* Анімація для числа */
+@keyframes animateNumber {
+  from {
+      opacity: 0;
+  }
+  to {
+      opacity: 1;
+  }
+}
+
+
+.special{
+  text-align:center; 
+  font-size: 2em;
+}
+.special1{
+  text-align: center;
+  font-size: 4em; 
+    margin: 10px; /* Забираємо зовнішні відступи */
+    padding: 0; /* Забираємо внутрішні відступи */
+    color: #750014;
+}
+/* .special2{
+  font-size: 2em;
+  text-align: center;
+} */
+
+.col-lg-4 {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.department {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(117, 0, 20, 0.1);
+  transition: box-shadow 0.3s ease-in-out;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.department:hover {
+  box-shadow: 0 0 20px rgba(117, 0, 20, 0.4);
+}
+
+.department h2 {
+  color: #333;
+  margin-top: 0;
+}
+
+.department h3 {
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.department p {
+  margin: 10px 0;
+}
+
+.department ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.department ul li {
+  background: rgba(117, 0, 20, 0.4); /* Змініть цей колір на бажаний */
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 5px;
+  color: #fff;
+  
+}
+
+.container1 {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  overflow: auto;
+}
+
+.department-item {
+  flex: 1 1 calc(33.333% - 20px);
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}

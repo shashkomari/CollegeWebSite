@@ -1,3 +1,6 @@
+$('.carousel').carousel({
+    interval: 2000  // Інтервал в мілісекундах, наприклад, 2000 мс = 2 сек.
+  });
 document.addEventListener('DOMContentLoaded', function () {
     const images = document.querySelectorAll('.img-fluid');
   
@@ -30,8 +33,126 @@ document.addEventListener('DOMContentLoaded', function () {
         overlay.remove();
       });
     }
+
+// SEARCH--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+const placeholders = ['Новини', 'Коледж', 'Адреса'];
+    let currentIndex = 0;
+    const searchField = document.getElementById('searchField');
+
+    function typeWriter(text, i, fnCallback) {
+        if (i < text.length) {
+            searchField.setAttribute('placeholder', text.substring(0, i + 1));
+            setTimeout(() => {
+                typeWriter(text, i + 1, fnCallback);
+            }, 100);
+        } else if (typeof fnCallback == 'function') {
+            setTimeout(fnCallback, 700);
+        }
+    }
+
+    function changePlaceholder() {
+        currentIndex = (currentIndex + 1) % placeholders.length;
+        const text = placeholders[currentIndex];
+        typeWriter(text, 0, () => {
+            setTimeout(() => {
+                changePlaceholder();
+            }, 2000);
+        });
+    }
+
+    changePlaceholder();
+
     
- 
+    function clearHighlights() {
+      const highlightedElements = document.querySelectorAll('.highlight');
+      highlightedElements.forEach(element => {
+          const parent = element.parentNode;
+          parent.replaceChild(document.createTextNode(element.textContent), element);
+          parent.normalize();
+      });
+  }
+
+  function getBackgroundColor(element) {
+      while (element) {
+          const bgColor = window.getComputedStyle(element).backgroundColor;
+          if (bgColor && bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent') {
+              return bgColor;
+          }
+          element = element.parentElement;
+      }
+      return 'white'; // default background color
+  }
+
+  function getTextColor(backgroundColor) {
+      const [r, g, b] = backgroundColor.match(/\d+/g).map(Number);
+      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+      return brightness > 125 ? '#750014' : 'white';
+  }
+
+  function highlightText(searchText) {
+      clearHighlights();
+
+      if (!searchText) return;
+
+      const regex = new RegExp(searchText, 'gi'); // 'g' for global and 'i' for case insensitive
+      const textNodes = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+
+      while (textNode = textNodes.nextNode()) {
+          const textContent = textNode.nodeValue;
+          if (regex.test(textContent)) {
+              const parentNode = textNode.parentNode;
+              const fragment = document.createDocumentFragment();
+
+              let lastIndex = 0;
+              textContent.replace(regex, (match, index) => {
+                  fragment.appendChild(document.createTextNode(textContent.slice(lastIndex, index)));
+                  const span = document.createElement('span');
+                  span.classList.add('highlight');
+                  span.textContent = match;
+
+                  const backgroundColor = getBackgroundColor(parentNode);
+                  span.style.textDecorationColor = getTextColor(backgroundColor);
+
+                  fragment.appendChild(span);
+                  lastIndex = index + match.length;
+              });
+              fragment.appendChild(document.createTextNode(textContent.slice(lastIndex)));
+              parentNode.replaceChild(fragment, textNode);
+          }
+      }
+  }
+
+  document.getElementById("searchField").addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+          const searchText = event.target.value.trim();
+          highlightText(searchText);
+      }
+  });
+
+  //MAIN--------------------------------------------------------------------------------------------------------------------------------------------------------------
+  window.addEventListener("scroll", revealOnScroll);
+
+        function revealOnScroll() {
+            var reveals = document.querySelectorAll('.hidden');
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var revealTop = reveals[i].getBoundingClientRect().top;
+                var revealPoint = 50;
+
+                if (revealTop < windowHeight - revealPoint) {
+                    reveals[i].classList.add('active');
+                } else {
+                    reveals[i].classList.remove('active'); // Remove the 'active' class if element is not in view
+                }
+            }
+        }
+
+        revealOnScroll();
+
+        
+
+
+        
   //   fetch('http://localhost:8080/api/tabs') // Адреса API для отримання масиву вкладинок
   //   .then(response => response.json())
   //   .then(data => {
