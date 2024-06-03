@@ -33,3 +33,12 @@ func (s *Service) GetTabs() ([]models.GetTabs, error) {
 
 	return tabs, err
 }
+
+func (s *Service) DeleteTab(id string) error {
+	err := s.repository.DeleteTab(id)
+	if err != nil {
+		return fmt.Errorf("repository.DeleteTab: %w", err)
+	}
+
+	return nil
+}

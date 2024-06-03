@@ -31,47 +31,6 @@ func (r *Repository) CreatePage(page models.DBCreatePage, tabID string) (string,
 	return page.ID.Hex(), nil
 }
 
-// matchStage := bson.D{{"$match",
-// 	bson.D{{"pages._id", pageObjID}}}}
-// unwindStage := bson.D{{"$unwind", "$pages"}}
-// matchStage2 := bson.D{{"$match",
-// 	bson.D{{"pages._id", pageObjID}}}}
-
-// cursor, err := collection.Aggregate(context.TODO(), mongo.Pipeline{matchStage, unwindStage, matchStage2})
-// if err != nil {
-// 	return "", fmt.Errorf("failed to aggregate filter pipeline: %w", err)
-// }
-
-// var pages []bson.M
-// if err = cursor.All(context.TODO(), &pages); err != nil {
-// 	return "", fmt.Errorf("failed to run cursor.All: %w", err)
-// }
-
-// for i, page := range pages {
-// 	fmt.Println(i, page)
-// }
-
-// filter := bson.M{"pages": bson.M{"$elemMatch": bson.M{"_id": pageObjID}}}
-// result := collection.FindOne(context.TODO(), filter)
-
-// var ret interface{}
-// if err := result.Decode(&ret); err != nil {
-// 	log.Println("Error: ", err.Error())
-// } else {
-// 	log.Println("Res: ", ret)
-// }
-// _, err = collection.UpdateOne(
-// 	context.TODO(),
-// 	bson.M{"_id": pageObjID},
-// 	bson.M{"$push": bson.M{"pages.$.blocks": block}},
-// )
-// if err != nil {
-// 	return "", fmt.Errorf("failed to create block: %w", err)
-// }
-// // result, err = collection.InsertOne(context.Background(), bson.M{"type": block.Type, "text": block.Text, "page_id": block.PageId})
-
-//Зміни код так щоб він у колекції tabs шукав по масиву pages page яка б мала потрібний url і повертав її _id
-
 func (r *Repository) GetPageIdByUrl(url string) (string, error) {
 
 	collection := r.db.Collection("tabs")
@@ -115,17 +74,34 @@ func (r *Repository) GetPageIdByUrl(url string) (string, error) {
 	}
 
 	return results[0].PageId, nil
+}
 
-	// collection := r.db.Collection("pages")
+func (r *Repository) DeletePage(id string) error {
+	// Convert the pageID string to a MongoDB ObjectID
+	pageObjID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fmt.Errorf("invalid page ID: %w", err)
+	}
 
-	// var result struct {
-	// 	Id string `bson:"_id"`
-	// }
+	// Define the collection
+	collection := r.db.Collection("tabs")
 
-	// err := collection.FindOne(context.Background(), bson.M{"url": url}).Decode(&result)
-	// if err != nil {
-	// 	return "", fmt.Errorf("failed to get page by url: %w", err)
-	// }
+	// Define the filter and update to remove the page with the specified ID from the pages array
+	filter := bson.M{"pages._id": pageObjID}
+	update := bson.M{
+		"$pull": bson.M{"pages": bson.M{"_id": pageObjID}},
+	}
 
-	// return result.Id, nil
+	// Perform the update operation
+	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return fmt.Errorf("failed to delete page: %w", err)
+	}
+
+	// Check if a document was modified
+	if result.ModifiedCount == 0 {
+		return fmt.Errorf("page ID %s not found", id)
+	}
+
+	return nil
 }

@@ -48,3 +48,25 @@ func (h *HTTP) GetTabs(c *gin.Context) {
 		"tabs": tabs,
 	})
 }
+
+func (h *HTTP) DeleteTab(c *gin.Context) {
+	id := c.GetHeader("id")
+	if id == "" {
+		log.Println("DeleteTab: id is empty")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error": "DeleteTab: id is empty",
+		})
+		return
+	}
+
+	err := h.Service.DeleteTab(id)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error h.Service.DeletePage": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{})
+}

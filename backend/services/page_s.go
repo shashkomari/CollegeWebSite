@@ -54,3 +54,12 @@ func (s *Service) GetPageIdByUrl(url string) (string, error) {
 
 	return id, nil
 }
+
+func (s *Service) DeletePage(id string) error {
+	err := s.repository.DeletePage(id)
+	if err != nil {
+		return fmt.Errorf("repository.DeletePage: %w", err)
+	}
+
+	return nil
+}

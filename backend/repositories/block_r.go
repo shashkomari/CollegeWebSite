@@ -106,3 +106,36 @@ func (r *Repository) GetBlocks(pageID string) ([]models.DBCreateBlock, error) {
 	// Return the blocks from the first (and only) page in the result
 	return result.Pages[0].Blocks, nil
 }
+
+func (r *Repository) DeleteBlock(id string) error {
+	blockObjID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fmt.Errorf("invalid block ID: %w", err)
+	}
+
+	// Define the collection
+	collection := r.db.Collection("tabs")
+
+	// Define the filter to match the block ID in any page's blocks array
+	filter := bson.M{
+		"pages.blocks._id": blockObjID,
+	}
+
+	// Define the update to pull (remove) the block from the blocks array
+	update := bson.M{
+		"$pull": bson.M{"pages.$[].blocks": bson.M{"_id": blockObjID}},
+	}
+
+	// Perform the update operation
+	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return fmt.Errorf("failed to delete block: %w", err)
+	}
+
+	// Check if a document was modified
+	if result.ModifiedCount == 0 {
+		return fmt.Errorf("block ID %s not found", id)
+	}
+
+	return nil
+}

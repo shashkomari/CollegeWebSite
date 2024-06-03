@@ -60,3 +60,30 @@ func (r *Repository) GetTabs() ([]models.GetTabs, error) {
 
 	return tabs, nil
 }
+
+func (r *Repository) DeleteTab(id string) error {
+	// Convert the id string to a MongoDB ObjectID
+	tabObjID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fmt.Errorf("invalid tab ID: %w", err)
+	}
+
+	// Define the collection
+	collection := r.db.Collection("tabs")
+
+	// Define the filter to match the tab with the specified ID
+	filter := bson.M{"_id": tabObjID}
+
+	// Perform the delete operation
+	result, err := collection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		return fmt.Errorf("failed to delete tab: %w", err)
+	}
+
+	// Check if a document was deleted
+	if result.DeletedCount == 0 {
+		return fmt.Errorf("tab ID %s not found", id)
+	}
+
+	return nil
+}

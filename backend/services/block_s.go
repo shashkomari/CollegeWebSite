@@ -70,3 +70,11 @@ func (s *Service) GetBlocks(pageId string) ([]models.DBCreateBlock, error) {
 
 	return blocks, err
 }
+
+func (s *Service) DeleteBlock(id string) error {
+	err := s.repository.DeleteBlock(id)
+	if err != nil {
+		return fmt.Errorf("repository.DeleteBlock: %w", err)
+	}
+	return nil
+}

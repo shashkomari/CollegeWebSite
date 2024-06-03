@@ -59,3 +59,25 @@ func (h *HTTP) GetPageIdByUrl(c *gin.Context) {
 		"id": id,
 	})
 }
+
+func (h *HTTP) DeletePage(c *gin.Context) {
+	id := c.GetHeader("id")
+	if id == "" {
+		log.Println("DeletePage: id is empty")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error": "DeletePage: id is empty",
+		})
+		return
+	}
+
+	err := h.Service.DeletePage(id)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error h.Service.DeletePage": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{})
+}
