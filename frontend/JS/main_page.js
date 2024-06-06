@@ -152,52 +152,289 @@ const placeholders = ['Новини', 'Коледж', 'Адреса'];
         
 
 
+    // ВЗЯТТЯ ВСІЄЇ ІНФОРМАЦІЇ З СЕРВЕРУ --------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Maximum number of items to display
+const maxItems = 4;
+
+// Fetch data from the server
+fetch('http://localhost:8080/api/tabs', {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json'
+    }
+})
+.then(response => response.json())
+.then(data => {
+    // Extract tabs array from the response
+    const tabs = data.tabs;
+
+    // Find the parent element of the "+" button
+    const addTabButton = document.querySelector('.nav-item:last-child');
+    const navbarNav = document.querySelector('#navbar-items');
+
+    // Loop through the fetched tabs and add each to the navbar
+    tabs.forEach(tab => {
+        const tabId = tab.ID;
+        const tabUrl = tab.Url;
+        const tabName = tab.Name;
+
+        // Check if the tab name is not "main_page_admin"
+        if (tabName !== "main_page_admin") {
+            const newTab = document.createElement('li');
+            newTab.className = 'nav-item';
+            newTab.innerHTML = `
+                <a class="nav-link item tabName" style="position: relative; color: white;" href="${tabUrl}" tabCounter="${tabId}">
+                    ${tabName}
+                </a>
+            `;
+
+            // Insert new tab before the "+" button
+            navbarNav.insertBefore(newTab, addTabButton);
+             
+        }
+    });
+
+    updateNavbar(); // Update the navbar to apply the limit and "More" functionality
+})
+.catch(error => {
+    console.error('Error fetching tabs from the server:', error);
+});
+
+// Function to update the navbar when new items are added dynamically
+function updateNavbar() {
+    const navItems = Array.from(document.querySelectorAll('#navbar-items .nav-item:not(#more-dropdown)'));
+    const moreDropdown = document.getElementById('more-dropdown');
+    const moreMenu = document.getElementById('more-menu');
+
+    // Clear the 'More' menu
+    moreMenu.innerHTML = '';
+
+    // Hide all items beyond the maxItems limit and move them to 'More'
+    if (navItems.length > maxItems) {
+        navItems.slice(maxItems).forEach(item => {
+            item.style.display = 'none';
+            const clonedItem = item.cloneNode(true);
+            clonedItem.style.display = 'block';
+            moreMenu.appendChild(clonedItem);
+        });
+        moreDropdown.style.display = 'block';
+    } else {
+        navItems.forEach(item => {
+            item.style.display = 'block';
+        });
+        moreDropdown.style.display = 'none';
+    }
+}
+
+getPageIdFromServer1();
+// Function to fetch Page ID from the server
+function getPageIdFromServer1() {
+    let currentUrl = new URL(window.location.href);
+    currentUrl.search = '';
+     // Check if the path is simply '/'
+    if (currentUrl.pathname === '/') {
+        currentUrl.pathname = '/main_page_admin';
+    } else {
+        // Append _admin to the existing path
+        currentUrl.pathname += '_admin';
+    }
+
+    fetch('http://localhost:8080/api/page', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'URL': currentUrl.href
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const pageId = data.id;
+        fetchBlocks(pageId);
+    })
+    .catch(error => {
+        console.error('Помилка при отриманні ідентифікатора сторінки:', error);
+    });
+}
+
+// Функція для отримання блоків на основі ідентифікатора сторінки
+function fetchBlocks(pageId) {
+    fetch('http://localhost:8080/api/blocks', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'PageID': pageId
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const blocks = data.blocks;
+        const mainContent = document.querySelector('#mainContent');
+        const sideContent = document.querySelector('.sideContent ul'); // Вибираємо ul
         
-  //   fetch('http://localhost:8080/api/tabs') // Адреса API для отримання масиву вкладинок
-  //   .then(response => response.json())
-  //   .then(data => {
-  //       // Обробка отриманих даних
-  //       displayTabs(data); // Виклик функції для відображення вкладинок у навбарі
-  //   })
-  //   .catch(error => {
-  //       console.error('Помилка:', error);
-  //   });
+        blocks.forEach(block => {
+            const blockContent = createBlockElement(block);
+            if (block.Type === 'block link') {
+                addNewBlock1(blockContent, sideContent);
+            } else {
+                addNewBlock1(blockContent, mainContent);
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Помилка отримання блоків з сервера:', error);
+    });
+}
+// const sideContent1 = document.getElementById('sideContent');
+// Функція для створення відповідного блоку на основі типу
+function createBlockElement(block) {
+    let layout;
+
+    switch (block.Type) {
+        case 'block image+text':
+            layout = createLayoutIT(block.ID, block.ImageSrc, block.Text);
+            break;
+        case 'block text':
+            layout = createLayoutT(block.ID, block.Text);
+            break;
+        case 'block text+link':
+            layout = createLayoutTL(block.ID, block.Text, block.Link, block.LinkText);
+            break;
+        case 'block link':
+            layout = createLink(block.ID, block.Link, block.LinkText);
+            break;
+        default:
+            console.error('Невідомий тип блоку:', block.type);
+    }
+
+    return layout;
+}
+
+
+// Оновлені функції для створення блоків з даними
+function createLayoutIT(ID, ImageSrc, Text) {
+    const layout = document.createElement('div');
+    layout.classList.add('layoutIT', 'row', 'align-items-center', 'hidden');
+    layout.style.position = 'relative';
+    layout.setAttribute('blockCounter', ID);
+    layout.setAttribute('blockSent', true);
+    layout.innerHTML = `
+    <hr class="split-hr">
+        <div class="col-lg-4 item">
+            <img src="${ImageSrc}" alt="Image" class="img-fluid mt-3" width="100%" height="100%" data-toggle="modal" data-target="#imageModal">
+        </div>
+        <div class="col-lg-8 item">
+            <p class="editor">${Text}</p>
+        </div>
+    `;
+    layout.querySelector('img').addEventListener('click', function() {
+        openImageModal(layout.querySelector('img').src);
+    });
+
+    return layout;
+}
+
+function createLayoutT(ID, Text) {
+    const layout = document.createElement('div');
+    layout.classList.add('layoutT', 'item', 'editor', 'hidden');
+    layout.style.position = 'relative';
+    layout.setAttribute('blockCounter', ID);
+    layout.setAttribute('blockSent', true);
+    layout.innerHTML = `
+    <hr class="split-hr">
+    <p class="item" style="position: relative;">${Text}</p>
+    `;
+    return layout;
+}
+
+function createLayoutTL(ID, Text, Link, LinkText) {
+    const layout = document.createElement('div');
+    layout.classList.add('layoutTL', 'item','hidden');
+    layout.style.position = 'relative';
+    layout.setAttribute('blockCounter', ID);
+    layout.setAttribute('blockSent', true);
+    layout.innerHTML = `
+    <hr class="split-hr">
+        <div class="editor">
+            <p class="item" style="position: relative;">${Text}</p>
+        </div>
+        <div>
+            <a class="linkA" href="${Link}">${LinkText}</a>
+        </div>
+    `;
+    return layout;
+}
+
+
+function createLink(ID, Link, LinkText) {
+    const linkItem = document.createElement('li');
+    linkItem.classList.add('item', 'linK'); // Змінив 'linK' на 'link'
+    linkItem.setAttribute('blockCounter', ID);
+    linkItem.setAttribute('blockSent', true);
+    linkItem.style.position = 'relative';
+    const linkElement = document.createElement('a'); // Створюємо елемент <a>
+    linkElement.classList.add('linkA'); // Додаємо клас 'linkA'
+    linkElement.href = Link;
+    linkElement.textContent = LinkText;
+    linkItem.appendChild(linkElement); // Додаємо <a> як дочірній елемент <li>
+    return linkItem;
+}
+
+
+function addNewBlock1(content, target) {
+   
+        target.appendChild(content);
+   
+}
+tabName();
+  function tabName(){
+    fetch('http://localhost:8080/api/tabs', {
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json'
+    }
+})
+.then(response => response.json())
+.then(data => {
+    // Extract tabs array from the response
+    const tabs = data.tabs;
+
     
 
-  //   function displayTabs(tabsData) {
-  //     const navbarNav = document.querySelector('#navbarNav .navbar-nav');
-  
-  //     tabsData.forEach(tab => {
-  //         const newTab = document.createElement('li');
-  //         newTab.className = 'nav-item dropdown';
-  
-  //         const dropdownToggle = document.createElement('a');
-  //         dropdownToggle.className = 'nav-link dropdown-toggle';
-  //         dropdownToggle.href = tab.url; // Припустимо, що в об'єкті даних для кожної вкладинки є поле "url"
-  //         dropdownToggle.setAttribute('role', 'button');
-  //         dropdownToggle.setAttribute('data-toggle', 'dropdown');
-  //         dropdownToggle.setAttribute('aria-haspopup', 'true');
-  //         dropdownToggle.setAttribute('aria-expanded', 'false');
-  //         dropdownToggle.textContent = tab.name; // Припустимо, що в об'єкті даних для кожної вкладинки є поле "name"
-  
-  //         const dropdownMenu = document.createElement('div');
-  //         dropdownMenu.className = 'dropdown-menu';
-  //         dropdownMenu.setAttribute('aria-labelledby', dropdownToggle.id);
-  
-  //         tab.subTabs.forEach(subTab => {
-  //             const dropdownItem = document.createElement('a');
-  //             dropdownItem.className = 'dropdown-item';
-  //             dropdownItem.href = subTab.url; // Припустимо, що в об'єкті даних для кожної підвкладинки є поле "url"
-  //             dropdownItem.textContent = subTab.name; // Припустимо, що в об'єкті даних для кожної підвкладинки є поле "name"
-  //             dropdownMenu.appendChild(dropdownItem);
-  //         });
-  
-  //         newTab.appendChild(dropdownToggle);
-  //         newTab.appendChild(dropdownMenu);
-  //         navbarNav.appendChild(newTab);
-  //     });
-  // }
-  
+    let currentPageName = '';
+
+    // Loop through the fetched tabs and add each to the navbar
+    tabs.forEach(tab => {
+        
+        const tabUrl = tab.Url;
+        const tabName = tab.Name;
+
+        // Check if the tab name is not "main_page_admin"
+        if (tabName !== "main_page_admin") {
+           
+            // Check if the current URL matches the tab URL
+            if (window.location.href === tabUrl) {
+                currentPageName = tabName;
+            }
+        }
+    });
+
+    // Set the page name using the current tab name
+    setPageName(currentPageName);
+
+})
+.catch(error => {
+    console.error('Error fetching tabs from the server:', error);
+});
+  }
+
+
+// Function to set the page name
+function setPageName(pageName) {
+    const pageNameSpan = document.getElementById('page-name-placeholder');
+    if (pageNameSpan) {
+        pageNameSpan.textContent = pageName;
+    }
+}
 
 
   });

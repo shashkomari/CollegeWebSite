@@ -16,12 +16,93 @@
   }
   .navbar-brand img {
     margin-right: 5px; 
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
   }
   .navbar-brand{
-    font-size: 28px;
+    font-size: 33px;
+    margin-right: 14%;
   }
+  .addTab{
+    padding-bottom: 13px;
+    font-size: 30px;
+  }
+
+  @media (min-width: 992px) {
+    .more-button {
+      display: inline-block;           /* Make the button an inline-block element */
+      border-radius: 4px;              /* Optional: round the corners */
+      border: 2px solid #ffffff;       /* Set border color */
+      color: #750014;                  /* Text color */
+      background-color: rgba(255, 255, 255, 0.92); /* Less saturated background color */
+      text-decoration: none;           /* Remove underline from links */
+      transition: all 0.3s ease;       /* Smooth transition for hover and active states */ 
+      box-shadow: 0px 4px 6px rgba(255, 255, 255, 0.7); /* Add shadow for 3D effect */
+  }
+  
+  .more-button:hover {
+      background-color: #ffffff;   /* Change background color on hover */
+      color: #fff;                 /* Change text color on hover */
+      box-shadow: 0 6px 8px rgba(255, 255, 255, 0.7); /* Slightly increase shadow on hover for depth */
+  }
+  
+  .more-button:active {
+      background-color: #ffffff;   /* Change background color on active */
+      border-color: #ffffff;       /* Change border color on active */
+      box-shadow: 0 2px 4px rgba(255, 255, 255, 0.7); /* Reduce shadow on active to indicate press */
+  }
+  
+#more-dropdown {
+  position: static; /* Ensure the dropdown trigger stays in its place */
+}
+
+#more-menu {
+  background-color: #750014; /* Background color */
+  color: #ffffff;            /* Text color */
+  width: 100%;               /* Full width of the screen */
+  position: fixed;           /* Fixed positioning */
+  left: 0;                   /* Align to the left edge of the screen */
+  top: 80px;                 /* Adjust this value based on the height of your navbar */
+  margin-left: 75%;                 /* Remove any default margin */
+  padding: 0;                /* Remove any default padding */
+  border: none;              /* Remove border */
+  z-index: 1000;             /* Ensure it appears above other content */
+  display: none;             /* Hide initially, show on hover or click */
+  max-height: 600px; /* Set the maximum height for the dropdown menu */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+#more-dropdown:hover #more-menu {
+  display: block;            /* Show dropdown on hover */
+}
+
+#more-dropdown .dropdown-menu .nav-item {
+  padding: 8px 16px;         /* Add padding for better appearance */
+  border-bottom: 1px solid #ffffff; /* Optional: add a border between items */
+}
+  }
+  /* For screens wider than 992px */
+@media (max-width: 992px) {
+  .collapse {
+    max-height: 600px; /* Set the maximum height for the collapsible navbar */
+    overflow-y: auto; /* Enable vertical scrolling */
+  }
+  #more-dropdown {
+    display: none; /* Hide the dropdown trigger */
+}
+
+#more-menu {
+    display: none; /* Hide the dropdown menu */
+}
+.more-button{
+  display: none;
+}
+
+/* Ensure all nav items are visible */
+.navbar-nav .nav-item {
+    display: block !important;
+}
+}
   .nav-item:hover .dropdown-menu {
     display: block;
   }
@@ -37,8 +118,7 @@
   .dropdown-item {
     font-size: 0.9em; /* Задаємо мінімальну ширину випадаючого списку */
   }
-
-
+ 
   body {
     font-size: 1.2em; /* Змініть розмір тексту за необхідністю */
 }
@@ -156,6 +236,7 @@
   padding-right: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4); /* Add shadow */
   border-radius: 10px;
+  margin-top: 15px;
 }
 
 
@@ -578,7 +659,7 @@ main {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  overflow: auto;
+  
 }
 
 .department-item {
@@ -587,6 +668,22 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+}
+.split-hr {
+  border: none;
+  border-top: 1px solid #ccc; /* Сіра лінія */
+  position: relative;
+  margin: 20px 0; /* Змініть значення за потребою */
+}
+
+.split-hr::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 20%; /* Ширина червоної частини лінії */
+  height: 3px; /* Товщина червоної частини лінії */
+  background-color: #a3142c; /* Червоний колір */
 }
 
 

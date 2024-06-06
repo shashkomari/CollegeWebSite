@@ -1,8 +1,9 @@
 $('.carousel').carousel({
     interval: 3000  // Інтервал в мілісекундах, наприклад, 2000 мс = 2 сек.
   });
+ 
 document.addEventListener('DOMContentLoaded', function () {
-   
+    
    // SEARCH--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 const placeholders = ['Новини', 'Коледж', 'Адреса'];
 let currentIndex = 0;
@@ -134,45 +135,233 @@ window.addEventListener("scroll", revealOnScroll);
         }
     });
     // ВЗЯТТЯ ВСІЄЇ ІНФОРМАЦІЇ З СЕРВЕРУ --------------------------------------------------------------------------------------------------------------------------------------------------------------
-// Отримати дані про всі вкладинки з сервера за допомогою методу GET
+// Maximum number of items to display
+const maxItems = 4;
+
+// Fetch data from the server
 fetch('http://localhost:8080/api/tabs', {
     method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
+    headers: {
+        'Content-Type': 'application/json'
+    }
+})
 .then(response => response.json())
 .then(data => {
-    // Дістаємо масив вкладинок з об'єкта "tabs"
+    // Extract tabs array from the response
     const tabs = data.tabs;
 
-    // Перебираємо отримані дані та відображаємо кожну вкладинку у навбарі
+    // Find the parent element of the "+" button
+    const addTabButton = document.querySelector('.nav-item:last-child');
+    const navbarNav = document.querySelector('#navbar-items');
+
+    // Loop through the fetched tabs and add each to the navbar
     tabs.forEach(tab => {
         const tabId = tab.ID;
         const tabUrl = tab.Url;
         const tabName = tab.Name;
 
-        const newTab = document.createElement('li');
-        newTab.className = 'nav-item';
-        newTab.innerHTML = `
-            <a class="nav-link item tabName" style="position: relative; color: white;" href="${tabUrl}" tabCounter="${tabId}">
-                ${tabName}
-            </a>
-        `;
+        // Check if the tab name is not "main_page_admin"
+        if (tabName !== "main_page_admin") {
+            const newTab = document.createElement('li');
+            newTab.className = 'nav-item';
+            newTab.innerHTML = `
+                <a class="nav-link items tabName" style="position: relative; color: white;" href="${tabUrl}" tabCounter="${tabId}">
+                    ${tabName}
+                </a>
+            `;
 
-        const navbarNav = document.querySelector('.navbar-nav');
-        navbarNav.appendChild(newTab);
-
-        // Знаходимо батьківський елемент кнопки "+"
-        const addTabButton = document.querySelector('.nav-item:last-child');
-
-        // Вставка нової вкладинки перед кнопкою "+"
-        addTabButton.parentNode.insertBefore(newTab, addTabButton);
+            // Insert new tab before the "+" button
+            navbarNav.insertBefore(newTab, addTabButton);
+        }
     });
+
+    updateNavbar(); // Update the navbar to apply the limit and "More" functionality
 })
 .catch(error => {
-    console.error('Помилка отримання вкладинок з сервера:', error);
+    console.error('Error fetching tabs from the server:', error);
 });
+
+// Function to update the navbar when new items are added dynamically
+function updateNavbar() {
+    const navItems = Array.from(document.querySelectorAll('#navbar-items .nav-item:not(#more-dropdown)'));
+    const moreDropdown = document.getElementById('more-dropdown');
+    const moreMenu = document.getElementById('more-menu');
+
+    // Clear the 'More' menu
+    moreMenu.innerHTML = '';
+
+    // Hide all items beyond the maxItems limit and move them to 'More'
+    if (navItems.length > maxItems) {
+        navItems.slice(maxItems).forEach(item => {
+            item.style.display = 'none';
+            const clonedItem = item.cloneNode(true);
+            clonedItem.style.display = 'block';
+            moreMenu.appendChild(clonedItem);
+        });
+        moreDropdown.style.display = 'block';
+    } else {
+        navItems.forEach(item => {
+            item.style.display = 'block';
+        });
+        moreDropdown.style.display = 'none';
+    }
+}
+
+
+getPageIdFromServer1();
+// Function to fetch Page ID from the server
+function getPageIdFromServer1() {
+    let currentUrl = new URL(window.location.href);
+    currentUrl.search = '';
+
+    fetch('http://localhost:8080/api/page', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'URL': currentUrl.href
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const pageId = data.id;
+        fetchBlocks(pageId);
+    })
+    .catch(error => {
+        console.error('Помилка при отриманні ідентифікатора сторінки:', error);
+    });
+}
+
+// Функція для отримання блоків на основі ідентифікатора сторінки
+function fetchBlocks(pageId) {
+    fetch('http://localhost:8080/api/blocks', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'PageID': pageId
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const blocks = data.blocks;
+        const mainContent = document.querySelector('#mainContent');
+        const sideContent = document.querySelector('#sideContent ul'); // Вибираємо ul
+        
+        blocks.forEach(block => {
+            const blockContent = createBlockElement(block);
+            if (block.Type === 'block link') {
+                addNewBlock1(blockContent, sideContent);
+            } else {
+                addNewBlock1(blockContent, mainContent);
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Помилка отримання блоків з сервера:', error);
+    });
+}
+// const sideContent1 = document.getElementById('sideContent');
+// Функція для створення відповідного блоку на основі типу
+function createBlockElement(block) {
+    let layout;
+
+    switch (block.Type) {
+        case 'block image+text':
+            layout = createLayoutIT(block.ID, block.ImageSrc, block.Text);
+            break;
+        case 'block text':
+            layout = createLayoutT(block.ID, block.Text);
+            break;
+        case 'block text+link':
+            layout = createLayoutTL(block.ID, block.Text, block.Link, block.LinkText);
+            break;
+        case 'block link':
+            layout = createLink(block.ID, block.Link, block.LinkText);
+            break;
+        default:
+            console.error('Невідомий тип блоку:', block.type);
+    }
+
+    return layout;
+}
+
+
+// Оновлені функції для створення блоків з даними
+function createLayoutIT(ID, ImageSrc, Text) {
+    const layout = document.createElement('div');
+    layout.classList.add('layoutIT', 'row', 'align-items-center', 'hidden', 'items');
+    layout.style.position = 'relative';
+    layout.setAttribute('blockCounter', ID);
+    layout.setAttribute('blockSent', true);
+    layout.innerHTML = `
+    <hr class="split-hr">
+        <div class="col-lg-4 item">
+            <img src="${ImageSrc}" alt="Image" class="img-fluid mt-3" width="100%" height="100%" data-toggle="modal" data-target="#imageModal">
+        </div>
+        <div class="col-lg-8 item">
+            <p class="editor">${Text}</p>
+        </div>
+    `;
+    layout.querySelector('img').addEventListener('click', function() {
+        openImageModal(layout.querySelector('img').src);
+    });
+
+    return layout;
+}
+
+function createLayoutT(ID, Text) {
+    const layout = document.createElement('div');
+    layout.classList.add('layoutT', 'items', 'editor', 'hidden');
+    layout.style.position = 'relative';
+    layout.setAttribute('blockCounter', ID);
+    layout.setAttribute('blockSent', true);
+    layout.innerHTML = `
+    <hr class="split-hr">
+    <p class="item" style="position: relative;">${Text}</p>
+    `;
+    return layout;
+}
+
+function createLayoutTL(ID, Text, Link, LinkText) {
+    const layout = document.createElement('div');
+    layout.classList.add('layoutTL', 'items','hidden');
+    layout.style.position = 'relative';
+    layout.setAttribute('blockCounter', ID);
+    layout.setAttribute('blockSent', true);
+    layout.innerHTML = `
+    <hr class="split-hr">
+        <div class="editor">
+            <p class="item" style="position: relative;">${Text}</p>
+        </div>
+        <div>
+            <a class="linkA" href="${Link}">${LinkText}</a>
+        </div>
+    `;
+    return layout;
+}
+
+
+function createLink(ID, Link, LinkText) {
+    const linkItem = document.createElement('li');
+    linkItem.classList.add('items', 'linK'); // Змінив 'linK' на 'link'
+    linkItem.setAttribute('blockCounter', ID);
+    linkItem.setAttribute('blockSent', true);
+    linkItem.style.position = 'relative';
+    const linkElement = document.createElement('a'); // Створюємо елемент <a>
+    linkElement.classList.add('linkA'); // Додаємо клас 'linkA'
+    linkElement.href = Link;
+    linkElement.textContent = LinkText;
+    linkItem.appendChild(linkElement); // Додаємо <a> як дочірній елемент <li>
+    return linkItem;
+}
+
+
+function addNewBlock1(content, target) {
+   
+        target.appendChild(content);
+   
+}
+
+ 
 
 //ЗОБРАЖЕННЯ(МОДУЛЬНЕ ВІКНО) --------------------------------------------------------------------------------------------------------------------------------------------------------------
     
@@ -245,12 +434,11 @@ const images = document.querySelectorAll('.img-fluid');
     const newTab = document.createElement('li');
     newTab.className = 'nav-item';
     newTab.innerHTML = `
-        <a class="nav-link item tabName" style="position: relative; color: white;" href="${tabUrl}" tabCounter="${tabId}">
+        <a class="nav-link items tabName" style="position: relative; color: white;" href="${tabUrl}" tabCounter="${tabId}">
             ${tabName}
         </a>
     `;
 
-    
     // Знаходимо батьківський елемент кнопки "+"
     // Знайти елемент, перед яким треба вставити нову вкладку
     const addTabButton = document.querySelector('.nav-item:last-child');
@@ -262,6 +450,7 @@ const images = document.querySelectorAll('.img-fluid');
     document.getElementById('tabName').value = '';
 
     })
+    
     .catch(error => {
         console.error('Помилка:', error);
     });
@@ -337,15 +526,15 @@ const images = document.querySelectorAll('.img-fluid');
 switch (selectedOption) {
     case "option1":
         // Handle option 1: Картинка + Текст
-        addNewBlock(createLayout1(), mainContent);
+        addNewBlock1(createLayout1(), mainContent);
         break;
     case "option2":
         // Handle option 2: Тільки Текст
-        addNewBlock(createLayout2(), mainContent);
+        addNewBlock1(createLayout2(), mainContent);
         break;
     case "option3":
         // Handle option 3: Текст + Посилання
-        addNewBlock(createLayout3(), mainContent);
+        addNewBlock1(createLayout3(), mainContent);
         break;
     case "option4":
         // Handle option 4: Поширене Посилання
@@ -459,7 +648,7 @@ $('#textOptionsModal').modal('hide');
     // Function to create layouts
     function createLayout1() {
         const layout = document.createElement('div');
-        layout.classList.add('layoutIT', 'col-lg-12', 'row', 'align-items-center');
+        layout.classList.add('layoutIT', 'row', 'align-items-center', 'items');
         layout.style.position = 'relative';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
@@ -506,7 +695,7 @@ $('#textOptionsModal').modal('hide');
 
     function createLayout2() {
         const layout = document.createElement('div');
-        layout.classList.add('layoutT','col-lg-12', 'item', 'editor');
+        layout.classList.add('layoutT', 'items', 'editor');
         layout.style.position = 'relative';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         layout.innerHTML = `
@@ -517,7 +706,7 @@ $('#textOptionsModal').modal('hide');
 
     function createLayout3() {
         const layout = document.createElement('div');
-        layout.classList.add('layoutTL','col-lg-12', 'item');
+        layout.classList.add('layoutTL', 'items');
         layout.style.position = 'relative';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
@@ -534,7 +723,7 @@ $('#textOptionsModal').modal('hide');
     }
 
     // Function to add new blocks to the specified content
-    function addNewBlock(content, target) {
+    function addNewBlock1(content, target) {
         target.appendChild(content);
     }
 
@@ -550,38 +739,79 @@ $('#textOptionsModal').modal('hide');
 
 
     // ВИДАЛЕННЯ ---------------------------------------------------------------------------------------------------------------------------------------------
+//     let pageId = null;
+// getPageIdFromServer2();
+//     // Function to fetch Page ID from the server
+//     function getPageIdFromServer2() {
+//         // Find the first tab element with the class 'tabName'
+//         let tabElement = document.querySelector('.nav-link.item.tabName');
+//         if (!tabElement) {
+//             console.error('Не вдалося знайти елемент вкладки з класом "tabName".');
+//             return;
+//         }
     
-    // Function to get pageId from server
-function getPageId() {
-    let currentUrl = new URL(window.location.href); // Create URL object from current URL
-
-    // Remove everything after the question mark (?)
-    currentUrl.search = '';
-
-    // Send GET request to server to get pageId
-    fetch('http://localhost:8080/api/page', {
-        method: 'GET',
+//         // Get the URL from the tab element's href attribute
+//         let tabUrl = tabElement.getAttribute('href');
+    
+//         fetch('http://localhost:8080/api/page', {
+//             method: 'GET',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'URL': tabUrl
+//             }
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             pageId = data.id;
+//         })
+//         .catch(error => {
+//             console.error('Помилка при отриманні ідентифікатора сторінки:', error);
+//         });
+//     }
+    
+  // Function to delete a tab
+function deleteTab(id) {
+    fetch('http://localhost:8080/api/tab', {
+        method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
-            'Url': currentUrl.href
+            'id': id
         }
     })
     .then(response => response.json())
     .then(data => {
-       return data.id;     
+        console.log('Tab deleted:', data);
     })
     .catch(error => {
-        console.error('Error getting pageId:', error);
+        console.error('Error deleting tab:', error);
     });
 }
+
+// Function to delete a block
+function deleteBlock(id) {
+    fetch('http://localhost:8080/api/block', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'id': id
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Block deleted:', data);
+    })
+    .catch(error => {
+        console.error('Error deleting block:', error);
+    });
+}
+
 // Отримати кнопку "Видалити" за її ID
 var deleteButton = document.getElementById("deleteButton");
 
 // Додати обробник подій для натискання на кнопку "Видалити"
 deleteButton.addEventListener("click", function() {
     // Отримати всі елементи з класом "item"
-    var items = document.querySelectorAll(".item");
-    // var itemsToDelete = [];
+    var items = document.querySelectorAll(".items");
 
     // Для кожного елемента додати хрестик та обробник події для видалення
     items.forEach(function(item) {
@@ -596,50 +826,25 @@ deleteButton.addEventListener("click", function() {
 
             // Якщо користувач підтвердив видалення
             if (confirmDelete) {
-              // Get the pageId asynchronously
-              getPageId().then(pageId => {
-                // Determine if the item is a tab or a block and create the data to send
-                var dataToDelete = {};
+                // Визначити тип елементу (таб чи блок) та отримати відповідний ID
+                var id;
 
                 if (item.classList.contains('tabName')) {
-                    // Handle tab deletion
-                    const tabId = item.getAttribute('tabCounter');
-                    dataToDelete = { id: tabId };
+                    id = item.getAttribute('tabCounter');
+                    deleteTab(id);
+                } else if (['layoutIT', 'layoutT', 'layoutTL', 'linK'].some(className => item.classList.contains(className))) {
+                    id = item.getAttribute('blockCounter');
+                    deleteBlock(id);
                 } else {
-                    // Handle block deletion
-                    const blockId = item.getAttribute('blockCounter');
-                    dataToDelete = { pageId: pageId, blockId: blockId };
+                    console.error('Unknown item type for element:', item);
+                    return;
                 }
 
-                // Send the data to the server for deletion
-                deleteItem(dataToDelete);
-
-                item.remove(); // Видалити елемент
-            });
-        }
+                item.remove(); // Видалити елемент з DOM
+            }
         });
     });
-
-    function deleteItem(dataToDelete) {
-        fetch('http://localhost:8080/api/delete', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(dataToDelete)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Item deleted:', data);
-        })
-        .catch(error => {
-            console.error('Error deleting item:', error);
-        });
-    }
-   
-   
 });
-
 // РЕДАГУВАННЯ -------------------------------------------------------------------------------------------------------------------------------------------
 // Ініціалізація редактора CKEditor
 var editorInitialized = false; // Прапорець для перевірки, чи редактор вже ініційований
@@ -647,7 +852,7 @@ var editorInitialized = false; // Прапорець для перевірки, 
 // Функція, яка буде викликана при натисканні на кнопку "Редагувати"
 document.getElementById("changeButton").addEventListener("click", function() {
     // Отримуємо всі елементи div з класом 'item'
-    var items = document.querySelectorAll('.item');
+    var items = document.querySelectorAll('.item') && document.querySelectorAll('.items');
     var mainItems = document.querySelectorAll('main .item');
     
     // Перебираємо кожен елемент і додаємо обробник подій для редагування
