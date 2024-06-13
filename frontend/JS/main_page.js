@@ -2,6 +2,23 @@ $('.carousel').carousel({
     interval: 3000  // Інтервал в мілісекундах, наприклад, 2000 мс = 2 сек.
   });
 document.addEventListener('DOMContentLoaded', function () {
+    const moreButton = document.getElementById('moreDropdown');
+  const moreMenu = document.getElementById('more-menu');
+
+  moreButton.addEventListener('click', function(event) {
+    event.preventDefault();
+    if (moreMenu.style.display === 'block') {
+      moreMenu.style.display = 'none';
+    } else {
+      moreMenu.style.display = 'block';
+    }
+  });
+
+  document.addEventListener('click', function(event) {
+    if (!moreButton.contains(event.target) && !moreMenu.contains(event.target)) {
+      moreMenu.style.display = 'none';
+    }
+  });
     const images = document.querySelectorAll('.img-fluid');
   
     images.forEach(image => {

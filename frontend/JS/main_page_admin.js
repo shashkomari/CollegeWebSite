@@ -3,7 +3,23 @@ $('.carousel').carousel({
   });
  
 document.addEventListener('DOMContentLoaded', function () {
-    
+    const moreButton = document.getElementById('moreDropdown');
+  const moreMenu = document.getElementById('more-menu');
+
+  moreButton.addEventListener('click', function(event) {
+    event.preventDefault();
+    if (moreMenu.style.display === 'block') {
+      moreMenu.style.display = 'none';
+    } else {
+      moreMenu.style.display = 'block';
+    }
+  });
+
+  document.addEventListener('click', function(event) {
+    if (!moreButton.contains(event.target) && !moreMenu.contains(event.target)) {
+      moreMenu.style.display = 'none';
+    }
+  });
    // SEARCH--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 const placeholders = ['Новини', 'Коледж', 'Адреса'];
 let currentIndex = 0;
@@ -288,7 +304,7 @@ function createBlockElement(block) {
 // Оновлені функції для створення блоків з даними
 function createLayoutIT(ID, ImageSrc, Text) {
     const layout = document.createElement('div');
-    layout.classList.add('layoutIT', 'row', 'align-items-center', 'hidden', 'items');
+    layout.classList.add('layoutIT', 'row', 'align-items-center', 'hidden', 'items', 'block');
     layout.style.position = 'relative';
     layout.setAttribute('blockCounter', ID);
     layout.setAttribute('blockSent', true);
@@ -310,7 +326,7 @@ function createLayoutIT(ID, ImageSrc, Text) {
 
 function createLayoutT(ID, Text) {
     const layout = document.createElement('div');
-    layout.classList.add('layoutT', 'items', 'editor', 'hidden');
+    layout.classList.add('layoutT', 'items', 'editor', 'hidden', 'block');
     layout.style.position = 'relative';
     layout.setAttribute('blockCounter', ID);
     layout.setAttribute('blockSent', true);
@@ -323,7 +339,7 @@ function createLayoutT(ID, Text) {
 
 function createLayoutTL(ID, Text, Link, LinkText) {
     const layout = document.createElement('div');
-    layout.classList.add('layoutTL', 'items','hidden');
+    layout.classList.add('layoutTL', 'items','hidden', 'block');
     layout.style.position = 'relative';
     layout.setAttribute('blockCounter', ID);
     layout.setAttribute('blockSent', true);
@@ -342,7 +358,7 @@ function createLayoutTL(ID, Text, Link, LinkText) {
 
 function createLink(ID, Link, LinkText) {
     const linkItem = document.createElement('li');
-    linkItem.classList.add('items', 'linK'); // Змінив 'linK' на 'link'
+    linkItem.classList.add('items', 'linK', 'block'); // Змінив 'linK' на 'link'
     linkItem.setAttribute('blockCounter', ID);
     linkItem.setAttribute('blockSent', true);
     linkItem.style.position = 'relative';
@@ -648,11 +664,12 @@ $('#textOptionsModal').modal('hide');
     // Function to create layouts
     function createLayout1() {
         const layout = document.createElement('div');
-        layout.classList.add('layoutIT', 'row', 'align-items-center', 'items');
+        layout.classList.add('layoutIT', 'row', 'align-items-center', 'items', 'block');
         layout.style.position = 'relative';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
         layout.innerHTML = `
+        <hr class="split-hr">
             <div class="col-lg-4 item">
                 <img src="/static/RESOURCES/IMAGE_ADMIN.png" alt="Image" class="img-fluid mt-3" width="100%" height="100%" data-toggle="modal" data-target="#imageModal">
             </div>
@@ -695,10 +712,11 @@ $('#textOptionsModal').modal('hide');
 
     function createLayout2() {
         const layout = document.createElement('div');
-        layout.classList.add('layoutT', 'items', 'editor');
+        layout.classList.add('layoutT', 'items', 'editor', 'block');
         layout.style.position = 'relative';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         layout.innerHTML = `
+        <hr class="split-hr">
         <p class="item" style="position: relative;">Це лише приклад. Введіть Ваш текст!</p>
         `;
         return layout;
@@ -706,12 +724,12 @@ $('#textOptionsModal').modal('hide');
 
     function createLayout3() {
         const layout = document.createElement('div');
-        layout.classList.add('layoutTL', 'items');
+        layout.classList.add('layoutTL', 'items', 'block');
         layout.style.position = 'relative';
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
         layout.innerHTML = `
-       
+       <hr class="split-hr">
         <div class="editor">
             <p class="item" style="position: relative;">Це лише приклад. Введіть Ваш текст та посилання!</p>
         </div>
@@ -739,35 +757,6 @@ $('#textOptionsModal').modal('hide');
 
 
     // ВИДАЛЕННЯ ---------------------------------------------------------------------------------------------------------------------------------------------
-//     let pageId = null;
-// getPageIdFromServer2();
-//     // Function to fetch Page ID from the server
-//     function getPageIdFromServer2() {
-//         // Find the first tab element with the class 'tabName'
-//         let tabElement = document.querySelector('.nav-link.item.tabName');
-//         if (!tabElement) {
-//             console.error('Не вдалося знайти елемент вкладки з класом "tabName".');
-//             return;
-//         }
-    
-//         // Get the URL from the tab element's href attribute
-//         let tabUrl = tabElement.getAttribute('href');
-    
-//         fetch('http://localhost:8080/api/page', {
-//             method: 'GET',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'URL': tabUrl
-//             }
-//         })
-//         .then(response => response.json())
-//         .then(data => {
-//             pageId = data.id;
-//         })
-//         .catch(error => {
-//             console.error('Помилка при отриманні ідентифікатора сторінки:', error);
-//         });
-//     }
     
   // Function to delete a tab
 function deleteTab(id) {
@@ -846,242 +835,171 @@ deleteButton.addEventListener("click", function() {
     });
 });
 // РЕДАГУВАННЯ -------------------------------------------------------------------------------------------------------------------------------------------
-// Ініціалізація редактора CKEditor
-var editorInitialized = false; // Прапорець для перевірки, чи редактор вже ініційований
 
-// Функція, яка буде викликана при натисканні на кнопку "Редагувати"
 document.getElementById("changeButton").addEventListener("click", function() {
-    // Отримуємо всі елементи div з класом 'item'
-    var items = document.querySelectorAll('.item') && document.querySelectorAll('.items');
-    var mainItems = document.querySelectorAll('main .item');
-    
+    var items = document.querySelectorAll('.item, .items');
+    // var mainItems = document.querySelectorAll('main .item');
+    var editorInitialized = false;
+    var blocks = document.querySelectorAll('.block')
+
     // Перебираємо кожен елемент і додаємо обробник подій для редагування
     items.forEach(function(item) {
         item.contentEditable = true; // Дозволяємо редагування тексту
     });
-    
-        // Отримати всі елементи з класом "close" (хрестики)
-        var closeButtons = document.querySelectorAll(".close");
-        
-        // Перебираємо кожен хрестик і приховуємо його
-        closeButtons.forEach(function(closeButton) {
-            closeButton.style.display = 'none'; // Приховуємо хрестик
-        });
-        if (!editorInitialized) { // Перевірка, чи редактор вже ініційований
-            var mainEditors = document.querySelectorAll('main .editor');
-            mainEditors.forEach(function(editorElement, index) {
-                ClassicEditor
-                    .create(editorElement, {
-                        toolbar: {
-                            items: [
-                                'heading',
-                                '|',
-                                'bold',
-                                'italic',
-                                '|',
-                                'bulletedList',
-                                'numberedList',
-                                '|',
-                                'outdent',
-                                'indent',
-                                '|',
-                                'undo',
-                                'redo'
-                            ]
-                        }
-                    })
-                    .then(editorInstance => {
-                        // Додаємо обробник події 'blur' для збереження змін
-                        editorInstance.model.document.on('change:data', () => {
-                            // Отримуємо дані з редактора та оновлюємо вміст відповідного елемента
-                            editorElement.innerHTML = editorInstance.getData();
-                        });
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
-            });
-        
-            editorInitialized = true; // Позначте, що редактор вже ініційований
-        }
+    blocks.forEach(function(block) {
+        // Create and insert the "Save" button
+        var saveButton = document.createElement('button');
+        saveButton.innerText = 'Зберегти';
+        saveButton.className = 'saveButton';
+        block.parentElement.insertBefore(saveButton, block.nextSibling);
 
-    // Додаємо обробник події для зміни зображення при натисканні на кожне зображення
+        // Add click event listener for the "Save" button
+        saveButton.addEventListener('click', function() {
+            // Get block information
+            var blockInfo = getBlockInfo(block);
+            if (blockInfo) {
+                // Strip styles before sending data
+                blockInfo.plainText = stripStyles(blockInfo.text);
+                sendPutRequest(blockInfo);
+            }
+        });
+    });
+    
+    var closeButtons = document.querySelectorAll(".close");
+    closeButtons.forEach(function(closeButton) {
+        closeButton.style.display = 'none'; // Приховуємо хрестик
+    });
+
+    if (!editorInitialized) {
+        var mainEditors = document.querySelectorAll('main .editor');
+        mainEditors.forEach(function(editorElement) {
+            ClassicEditor.create(editorElement, {
+                toolbar: {
+                    items: [
+                        'heading', '|', 'bold', 'italic', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'outdent', 'indent', '|', 'undo', 'redo'
+                    ]
+                }
+            }).then(editorInstance => {
+                editorInstance.model.document.on('change:data', () => {
+                    editorElement.innerHTML = editorInstance.getData();
+                });
+            }).catch(error => {
+                console.error(error);
+            });
+        });
+
+        editorInitialized = true;
+    }
+
     document.querySelectorAll('.item img').forEach(function(img) {
-        img.addEventListener('click', function(event) {
-            // Викликаємо файлову систему для вибору нового зображення
+        img.addEventListener('click', function() {
             var fileInput = document.createElement('input');
             fileInput.type = 'file';
-
-            // Додаємо обробник події 'change', який викликається при виборі файлу
             fileInput.addEventListener('change', function() {
-                // Отримуємо вибраний файл
                 var file = this.files[0];
-                var formData = new FormData(); // Створюємо об'єкт FormData для передачі файлу
-
-                formData.append('file', file); // Додаємо файл до FormData
-
-                fetch('url_для_завантаження_зображення', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Встановлюємо src атрибут фото на базі URL зображення з сервера
-                    img.src = data.filePath; // Припустимо, що сервер повертає шлях до збереженого зображення
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+                var formData = new FormData();
+                formData.append('file', file);  // Додаємо обраний файл у formData
+                getBlockInfo(img.parentNode, formData);  // Передаємо батьківський елемент та formData
             });
-
             fileInput.click();
         });
     });
-     // Отримуємо всі посилання з класом linkA на сторінці
-var links = document.querySelectorAll('a.linkA');
 
-// Додаємо обробник подій до кожного посилання з класом linkA
-links.forEach(function (link) {
-    link.addEventListener('click', function (event) {
-        event.preventDefault(); // Забороняємо стандартну дію посилання
-        openEditModal(link); // Відкриваємо модальне вікно для редагування
+    var links = document.querySelectorAll('a.linkA');
+    links.forEach(function(link) {
+        link.addEventListener('click', function(event) {
+            event.preventDefault();
+            openEditModal(link);
+        });
     });
-});
 
-    // Функція для відкриття модального вікна для редагування
     function openEditModal(link) {
-        // Отримуємо назву та посилання посилання, на яке натиснули
         var linkName = link.textContent;
         var linkUrl = link.getAttribute('href');
-
-        // Заповнюємо форму в модальному вікні з отриманими значеннями
         document.getElementById('linkName').value = linkName;
         document.getElementById('linkUrl').value = linkUrl;
-        // document.getElementById('linkFile').value = linkFile;
-
-        // Відкриваємо модальне вікно
         $('#editLinkModal').modal('show');
 
-        // Додаємо обробник події для збереження даних при натисканні на кнопку "Зберегти"
-        document.getElementById('saveLink').addEventListener('click', function () {
-            // Отримуємо змінені значення з форми
+        document.getElementById('saveLink').addEventListener('click', function() {
             var editedLinkName = document.getElementById('linkName').value;
             var editedLinkUrl = document.getElementById('linkUrl').value;
-            var editedLinkFile = document.getElementById('linkFile').files[0];
-
-            // // Змінюємо текст та посилання посилання, на яке натиснули
-            // link.textContent = editedLinkName;
-            // link.href = editedLinkUrl || editedLinkFile;
-
-
-// Якщо файл обраний, використовуємо його як посилання
-if (editedLinkFile) {
-    var fileReader = new FileReader();
-    fileReader.onload = function(event) {
-        var linkFile = event.target.result;
-        link.textContent = editedLinkName;
-        link.href = linkFile;
-        $('#editLinkModal').modal('hide');
-        // Отправка данных на сервер методом PUT з updatedData
-    };
-    fileReader.readAsDataURL(editedLinkFile);
-} else {
-    // Використовуємо URL, яке ввів користувач в поле посилання
-    link.textContent = editedLinkName;
-    link.href = editedLinkUrl;
-    $('#editLinkModal').modal('hide');
-    // Отправка данных на сервер методом PUT з updatedData
-}
-// Функція для отримання інформації про блок
-function getBlockInfo(block, blockCounter) {
-    let blockInfo = null;
-
-    if (block.classList.contains('layoutIT')) {
-        blockInfo = {
-            blockCounter: blockCounter,
-            image: block.querySelector('img').src,
-            text: block.textContent.trim()
-        };
-    } else if (block.classList.contains('layoutT')) {
-        blockInfo = {
-            blockCounter: blockCounter,
-            text: block.textContent.trim()
-        };
-    } else if (block.classList.contains('layoutTL')) {
-        let linkElement = block.querySelector('a');
-        blockInfo = {
-            blockCounter: blockCounter,
-            text: block.querySelector('p').textContent.trim(),
-            link: linkElement.getAttribute('href'),
-            linkText: linkElement.textContent.trim(),
-        };
-    // // }
-    // } else if (block.classList.contains('tabName') || block.classList.contains('tabItems')) {
-    } else if (block.classList.contains('tabName')) {
-        blockInfo = {
-            tabCounter: block.getAttribute('tabCounter'),
-            tabName: block.querySelector('.tabName').textContent.trim(),
-            // TabItems: block.querySelector('.tabItems').textContent.trim()
-        };
-    } else if (block.classList.contains('linK')) {
-        let linkElement = block.querySelector('a');
-        blockInfo = {
-            blockCounter: blockCounter,
-            link: linkElement.getAttribute('href'),
-            linkText: linkElement.textContent.trim(),
-        };
-    }
-
-   
-    // Перевірка на null і додавання "-" для незміненої інформації
-    if (blockInfo !== null) {
-        for (const key in blockInfo) {
-            if (blockInfo[key] === "") {
-                blockInfo[key] = "—";
-            }
-        }
-    }
-
-    return blockInfo;
-}
-
-// Функція для відправки даних про блок на сервер методом PUT
-function sendPutRequest(data) {
-    fetch('url_для_вашого_сервера', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Success:', data);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
-items.forEach(function(item) {
-    var blockCounter = item.getAttribute('blockCounter');
-    var blockInfo = getBlockInfo(item, blockCounter); // Отримуємо інформацію про блок за допомогою функції getBlockInfo
-
-    // Перевіряємо, чи є інформація про блок
-    if (blockInfo !== null) {
-        // Відправляємо дані про блок на сервер методом PUT
-        sendPutRequest(blockInfo);
-    }
-});
-            
+          
+                link.textContent = editedLinkName;
+                link.href = editedLinkUrl;
+                $('#editLinkModal').modal('hide');
+            // }
         });
     }
-});
+
+    function getBlockInfo(block, formData) { 
+        let blockInfo = {
+            id: block.getAttribute('blockcounter') || "-",
+            type: "-",
+            imageSrc: "-",
+            text: "-",
+            plainText: "-",
+            link: "-",
+            linkText: "-"
+        };
+
+        if (block.classList.contains('layoutIT')) {
+            blockInfo.type = 'block image+text';
+            blockInfo.imageSrc = formData.get('file') ? block.querySelector('img').src : "-";
+            blockInfo.text = block.innerHTML.trim() || "-";
+        } else if (block.classList.contains('layoutT')) {
+            blockInfo.type = 'block text';
+            blockInfo.text = block.innerHTML.trim() || "-";
+        } else if (block.classList.contains('layoutTL')) {
+            let linkElement = block.querySelector('a');
+            blockInfo.type = 'block text+link';
+            blockInfo.text = block.querySelector('p') ? block.querySelector('p').innerHTML.trim() : "-";
+            blockInfo.link = linkElement ? linkElement.getAttribute('href') : "-";
+            blockInfo.linkText = linkElement ? linkElement.textContent.trim() : "-";
+    
+        } else if (block.classList.contains('linK')) {
+            let linkElement = block.querySelector('a');
+            blockInfo.type = 'block link';
+            blockInfo.link = linkElement ? linkElement.getAttribute('href') : "-";
+            blockInfo.linkText = linkElement ? linkElement.textContent.trim() : "-";
+        }
+
+        return blockInfo;
+    }
+        
+        // } else if (block.classList.contains('tabName')) {
+        //     blockInfo = {
+        //         tabCounter: block.getAttribute('tabCounter'),
+        //         tabName: block.querySelector('.tabName').textContent.trim()
+        //     };
+       
+        function stripStyles(html) {
+            var tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || "";
+        }
+    function sendPutRequest(data) {
+        fetch('http://localhost:8080/api/block', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }).then(data => {
+            console.log('Success:', data);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+  
+}); 
 
 
 });
