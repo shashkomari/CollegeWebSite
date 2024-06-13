@@ -21,6 +21,7 @@ type Repository interface {
 	GetBlocks(pageId string) ([]models.DBCreateBlock, error)
 	CreateBlock(block models.DBCreateBlock, pageID string) (string, error)
 	DeleteBlock(id string) error
+	EditBlock(block models.DBCreateBlock) error
 }
 
 func NewService(repository Repository) *Service {

@@ -31,6 +31,9 @@ func (r *Repository) CreateBlock(block models.DBCreateBlock, pageID string) (str
 	if block.LinkText != "" {
 		updateDoc["linkText"] = block.LinkText
 	}
+	if block.ImageSrc != "" {
+		updateDoc["imageSrc"] = block.ImageSrc
+	}
 
 	// switch block.Type {
 	// case "block text":
@@ -136,6 +139,79 @@ func (r *Repository) DeleteBlock(id string) error {
 	if result.ModifiedCount == 0 {
 		return fmt.Errorf("block ID %s not found", id)
 	}
+
+	return nil
+}
+
+func (r *Repository) EditBlock(block models.DBCreateBlock) error {
+	collection := r.db.Collection("tabs")
+
+	// Build the update document dynamically to include only non-empty fields
+	updateDoc := bson.M{}
+
+	switch block.Type {
+	case "block text":
+		if block.Text != "-" {
+			updateDoc["pages.$[page].blocks.$[block].text"] = block.Text
+		}
+
+	case "block image+text":
+		if block.Text != "-" {
+			updateDoc["pages.$[page].blocks.$[block].text"] = block.Text
+		}
+		if block.ImageSrc != "-" {
+			updateDoc["pages.$[page].blocks.$[block].imageSrc"] = block.ImageSrc
+		}
+
+	case "block text+link":
+		if block.Text != "-" {
+			updateDoc["pages.$[page].blocks.$[block].text"] = block.Text
+		}
+		if block.Link != "-" {
+			updateDoc["pages.$[page].blocks.$[block].link"] = block.Link
+		}
+		if block.LinkText != "-" {
+			updateDoc["pages.$[page].blocks.$[block].linkText"] = block.LinkText
+		}
+
+	case "block link":
+		if block.Link != "-" {
+			updateDoc["pages.$[page].blocks.$[block].link"] = block.Link
+		}
+		if block.LinkText != "-" {
+			updateDoc["pages.$[page].blocks.$[block].linkText"] = block.LinkText
+		}
+
+	default:
+		return fmt.Errorf("services.EditBlock: error type %q", block.Type)
+	}
+	// Define the update operation
+	update := bson.M{
+		"$set": updateDoc,
+	}
+
+	// Create the filter to find the specific block by its ID within the pages array
+	filter := bson.M{"pages.blocks._id": block.ID}
+
+	// Define array filters to correctly identify the page and block
+	arrayFilters := options.ArrayFilters{
+		Filters: []interface{}{
+			bson.M{"page.blocks._id": block.ID},
+			bson.M{"block._id": block.ID},
+		},
+	}
+
+	updateOptions := options.UpdateOptions{
+		ArrayFilters: &arrayFilters,
+	}
+
+	// Execute the update operation
+	result, err := collection.UpdateOne(context.TODO(), filter, update, &updateOptions)
+	if err != nil {
+		return fmt.Errorf("failed to update: %w", err)
+	}
+
+	fmt.Printf("Matched %v documents and updated %v documents.\n", result.MatchedCount, result.ModifiedCount)
 
 	return nil
 }

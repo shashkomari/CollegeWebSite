@@ -11,13 +11,35 @@ import (
 func (h *HTTP) CreateBlock(c *gin.Context) {
 	var block models.CreateBlock
 
-	if err := c.BindJSON(&block); err != nil {
+	if err := c.ShouldBind(&block); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Error BindJSON": err.Error(),
+			"Error ShouldBind": err.Error(),
 		})
 		return
 	}
+
+	if block.Type == "block image+text" {
+		_, err := c.FormFile("file")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"Error FormFile": err.Error(),
+			})
+			return
+		}
+
+		// h.Service.saveFileToGridFS(image)
+		// fileID, err := saveFileToGridFS(image)
+		// if err != nil {
+		// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save file: " + err.Error()})
+		// 	return
+		// }
+
+		// Зберігання ObjectID файлу в структурі block
+		// block.Image = fileID.Hex()
+
+	}
+
 	log.Println(block)
 	id, err := h.Service.CreateBlock(block)
 	if err != nil {
@@ -72,6 +94,29 @@ func (h *HTTP) DeleteBlock(c *gin.Context) {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"Error h.Service.DeleteBlock": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{})
+}
+
+func (h *HTTP) EditBlock(c *gin.Context) {
+	var block models.DBCreateBlock
+	if err := c.ShouldBind(&block); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error ShouldBind": err.Error(),
+		})
+		return
+	}
+
+	log.Println(block)
+	err := h.Service.EditBlock(block)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error h.Service.EditBlock": err.Error(),
 		})
 		return
 	}

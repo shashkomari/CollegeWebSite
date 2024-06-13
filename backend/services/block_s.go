@@ -24,6 +24,9 @@ func (s *Service) CreateBlock(block models.CreateBlock) (string, error) {
 		if block.Text == "" {
 			return "", fmt.Errorf("services.CreateBlock: text is empty")
 		}
+		if block.Image == "" {
+			return "", fmt.Errorf("services.CreateBlock: image is empty")
+		}
 
 	case "block text+link":
 		if block.Text == "" {
@@ -53,6 +56,7 @@ func (s *Service) CreateBlock(block models.CreateBlock) (string, error) {
 	blockdata.Link = block.Link
 	blockdata.Text = block.Text
 	blockdata.LinkText = block.LinkText
+	blockdata.ImageSrc = block.Image
 
 	id, err := s.repository.CreateBlock(blockdata, block.PageId)
 	if err != nil {
@@ -76,5 +80,55 @@ func (s *Service) DeleteBlock(id string) error {
 	if err != nil {
 		return fmt.Errorf("repository.DeleteBlock: %w", err)
 	}
+	return nil
+}
+
+func (s *Service) EditBlock(block models.DBCreateBlock) error {
+	if block.Type == "" {
+		return fmt.Errorf("services.EditBlock: type is empty")
+	}
+
+	switch block.Type {
+	case "block text":
+		if block.Text == "" {
+			return fmt.Errorf("services.EditBlock: text is empty")
+		}
+
+	case "block image+text":
+		if block.Text == "" {
+			return fmt.Errorf("services.EditBlock: text is empty")
+		}
+		if block.ImageSrc == "" {
+			return fmt.Errorf("services.EditBlock: image is empty")
+		}
+
+	case "block text+link":
+		if block.Text == "" {
+			return fmt.Errorf("services.EditBlock: text is empty")
+		}
+		if block.Link == "" { // TODO: validate link
+			return fmt.Errorf("services.EditBlock: link is empty")
+		}
+		if block.LinkText == "" {
+			return fmt.Errorf("services.EditBlock: linktext is empty")
+		}
+
+	case "block link":
+		if block.Link == "" { // TODO: validate link
+			return fmt.Errorf("services.EditBlock: link is empty")
+		}
+		if block.LinkText == "" {
+			return fmt.Errorf("services.EditBlock: linktext is empty")
+		}
+
+	default:
+		return fmt.Errorf("services.EditBlock: error type %q", block.Type)
+	}
+
+	err := s.repository.EditBlock(block)
+	if err != nil {
+		return fmt.Errorf("repository.EditBlock: %w", err)
+	}
+
 	return nil
 }

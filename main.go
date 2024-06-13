@@ -58,6 +58,7 @@ func main() {
 	r.GET("/api/blocks", handler.GetBlocks)
 	r.POST("/api/block", handler.CreateBlock)
 	r.DELETE("/api/block", handler.DeleteBlock)
+	r.PUT("/api/block", handler.EditBlock)
 
 	r.POST("/api/sign_in", handler.SignIn)
 
