@@ -15,7 +15,7 @@ type GetPageIdByUrl struct {
 	URL string `bson:"url"`
 }
 
-type GetPages struct {
+type AllPage struct {
 	ID   primitive.ObjectID `bson:"_id"`
 	Name string             `bson:"name"`
 	URL  string             `bson:"url"`

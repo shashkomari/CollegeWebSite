@@ -87,3 +87,36 @@ func (r *Repository) DeleteTab(id string) error {
 
 	return nil
 }
+
+func (r *Repository) EditTab(tab models.GetTabs) error {
+	collection := r.db.Collection("tabs")
+
+	// Build the update document dynamically to include only non-empty fields
+	updateDoc := bson.M{}
+	if tab.Name != "" {
+		updateDoc["name"] = tab.Name
+	}
+
+	// If there are no fields to update, return nil
+	if len(updateDoc) == 0 {
+		return nil
+	}
+
+	// Define the update operation
+	update := bson.M{
+		"$set": updateDoc,
+	}
+
+	// Create the filter to find the specific tab by its ID
+	filter := bson.M{"_id": tab.ID}
+
+	// Execute the update operation
+	result, err := collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return fmt.Errorf("failed to update: %w", err)
+	}
+
+	fmt.Printf("Matched %v documents and updated %v documents.\n", result.MatchedCount, result.ModifiedCount)
+
+	return nil
+}

@@ -70,3 +70,26 @@ func (h *HTTP) DeleteTab(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]interface{}{})
 }
+
+func (h *HTTP) EditTab(c *gin.Context) {
+	var tab models.GetTabs
+
+	if err := c.BindJSON(&tab); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error BindJSON": err.Error(),
+		})
+		return
+	}
+
+	err := h.Service.EditTab(tab)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error h.Service.EditTab": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{})
+}

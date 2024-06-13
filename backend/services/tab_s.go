@@ -42,3 +42,16 @@ func (s *Service) DeleteTab(id string) error {
 
 	return nil
 }
+
+func (s *Service) EditTab(tab models.GetTabs) error {
+	if tab.Name == "" {
+		return fmt.Errorf("services.EditTab: name is empty")
+	}
+
+	err := s.repository.EditTab(tab)
+	if err != nil {
+		return fmt.Errorf("repository.EditTab: %w", err)
+	}
+
+	return nil
+}

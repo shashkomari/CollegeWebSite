@@ -50,10 +50,12 @@ func main() {
 	r.GET("/api/page", handler.GetPageIdByUrl)
 	r.POST("/api/page", handler.CreatePage)
 	r.DELETE("/api/page", handler.DeletePage)
+	r.PUT("/api/page", handler.EditPage)
 
 	r.GET("/api/tabs", handler.GetTabs)
 	r.POST("/api/tab", handler.CreateTab)
 	r.DELETE("/api/tab", handler.DeleteTab)
+	r.PUT("/api/tab", handler.EditTab)
 
 	r.GET("/api/blocks", handler.GetBlocks)
 	r.POST("/api/block", handler.CreateBlock)

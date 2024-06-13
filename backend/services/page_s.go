@@ -63,3 +63,23 @@ func (s *Service) DeletePage(id string) error {
 
 	return nil
 }
+
+func (s *Service) EditPage(aboutPage models.AllPage) error {
+	var page models.AllPage
+	if aboutPage.Name == "" {
+		return fmt.Errorf("repository.EditPage: name is empty")
+	}
+	if aboutPage.Name != "-" {
+		text_for_url := translateUkrainianToEnglish(strings.ToLower(aboutPage.Name))
+		text_for_url = regexp.MustCompile("[^a-zA-Zа-яА-Я]").ReplaceAllString(text_for_url, "")
+		page.URL = "http://localhost:8080/" + text_for_url
+		page.Name = aboutPage.Name
+	}
+
+	err := s.repository.EditPage(page)
+	if err != nil {
+		return fmt.Errorf("repository.EditPage: %w", err)
+	}
+
+	return nil
+}

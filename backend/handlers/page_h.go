@@ -81,3 +81,26 @@ func (h *HTTP) DeletePage(c *gin.Context) {
 
 	c.JSON(http.StatusOK, map[string]interface{}{})
 }
+
+func (h *HTTP) EditPage(c *gin.Context) {
+	var page models.AllPage
+
+	if err := c.BindJSON(&page); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error BindJSON": err.Error(),
+		})
+		return
+	}
+	log.Println(page)
+	err := h.Service.EditPage(page)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"Error h.Service.EditPage": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{})
+}

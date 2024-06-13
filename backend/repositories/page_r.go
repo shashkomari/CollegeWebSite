@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func (r *Repository) CreatePage(page models.DBCreatePage, tabID string) (string, error) {
@@ -102,6 +103,50 @@ func (r *Repository) DeletePage(id string) error {
 	if result.ModifiedCount == 0 {
 		return fmt.Errorf("page ID %s not found", id)
 	}
+
+	return nil
+}
+
+func (r *Repository) EditPage(page models.AllPage) error {
+	collection := r.db.Collection("tabs")
+
+	// Prepare the update document with non-empty fields
+	updateDoc := bson.M{}
+
+	if page.Name != "-" {
+		updateDoc["pages.$[page].name"] = page.Name
+	}
+	if page.URL != "-" {
+		updateDoc["pages.$[page].url"] = page.URL
+	}
+
+	// Define the filter to find the specific page by its ID within the tabs collection
+	filter := bson.M{
+		"pages._id": page.ID,
+	}
+
+	update := bson.M{
+		"$set": updateDoc,
+	}
+
+	// Define array filters to correctly identify the page
+	arrayFilters := options.ArrayFilters{
+		Filters: []interface{}{
+			bson.M{"page._id": page.ID},
+		},
+	}
+
+	updateOptions := options.UpdateOptions{
+		ArrayFilters: &arrayFilters,
+	}
+
+	// Execute the update operation
+	result, err := collection.UpdateOne(context.TODO(), filter, update, &updateOptions)
+	if err != nil {
+		return fmt.Errorf("failed to update page: %w", err)
+	}
+
+	fmt.Printf("Matched %v documents and updated %v documents.\n", result.MatchedCount, result.ModifiedCount)
 
 	return nil
 }

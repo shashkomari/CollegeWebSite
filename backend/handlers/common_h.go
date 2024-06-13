@@ -15,13 +15,13 @@ type Service interface {
 	GetTabs() ([]models.GetTabs, error)
 	CreateTab(tab models.CreateTab) (string, string, error)
 	DeleteTab(id string) error
-	//EditTab()
+	EditTab(tab models.GetTabs) error
 
 	//GetPages(tabId string) ([]models.GetPages, error)
 	CreatePage(page models.CreatePage) (string, string, error)
 	DeletePage(id string) error
 	GetPageIdByUrl(url string) (string, error)
-	//EditPage()
+	EditPage(page models.AllPage) error
 
 	GetBlocks(pageId string) ([]models.DBCreateBlock, error)
 	CreateBlock(block models.CreateBlock) (string, error)
