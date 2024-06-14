@@ -179,10 +179,10 @@ fetch('http://localhost:8080/api/tabs', {
         // Check if the tab name is not "main_page_admin"
         if (tabName !== "main_page_admin") {
             const newTab = document.createElement('li');
-            newTab.className = 'nav-item';
+            newTab.className = 'nav-item change';
             newTab.innerHTML = `
                 <a class="nav-link items tabName" style="position: relative; color: white;" href="${tabUrl}" tabCounter="${tabId}">
-                    ${tabName}
+                ${tabName}
                 </a>
             `;
 
@@ -840,7 +840,9 @@ document.getElementById("changeButton").addEventListener("click", function() {
     var items = document.querySelectorAll('.item, .items');
     // var mainItems = document.querySelectorAll('main .item');
     var editorInitialized = false;
-    var blocks = document.querySelectorAll('.block')
+    var blocks = document.querySelectorAll('.block');
+    var tabs = document.querySelectorAll('.change');
+    var button = document.querySelectorAll('.nav-item');
 
     // Перебираємо кожен елемент і додаємо обробник подій для редагування
     items.forEach(function(item) {
@@ -864,6 +866,52 @@ document.getElementById("changeButton").addEventListener("click", function() {
             }
         });
     });
+// Create and insert the "Save" button before the first tab
+if (button.length > 0) {
+    var saveButton = document.createElement('button');
+    saveButton.innerHTML = '&#10004;';  // Checkmark symbol
+    saveButton.className = 'saveButtonTab';
+    button[0].parentElement.insertBefore(saveButton, button[0]);
+
+
+    // Змінна для збереження змінених таб
+    let changedTabs = [];
+
+    // Функція для додавання таби до змінених
+    function addChangedTab(tab) {
+        if (!changedTabs.includes(tab)) {
+            changedTabs.push(tab);
+        }
+    }
+
+    // Додамо обробник події click для кожної таби
+    tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            // Оновлюємо змінені таби при кліці на табу
+            addChangedTab(tab);
+        });
+    });
+
+    // Додаємо обробник події click для кнопки "Зберегти"
+    saveButton.addEventListener('click', function() {
+        // Перевіряємо, чи є змінені таби
+        if (changedTabs.length > 0) {
+            // Отримуємо інформацію про кожну змінену табу та відправляємо її
+            changedTabs.forEach(function(tab) {
+                var tabInfo = getTabsInfo(tab);
+                if (tabInfo) {
+                    sendPutRequestTab(tabInfo);
+                }
+            });
+            // Після відправлення очищаємо змінені таби
+            changedTabs = [];
+        } else {
+            console.log('Жодна таба не була змінена');
+        }
+    });
+}
+
+
     
     var closeButtons = document.querySelectorAll(".close");
     closeButtons.forEach(function(closeButton) {
@@ -932,10 +980,25 @@ document.getElementById("changeButton").addEventListener("click", function() {
             // }
         });
     }
+    function getTabsInfo(tab) {
+        let tabInfo = {
+            id: null, // За замовчуванням, якщо не знайдено атрибут 'tabCounter'
+            name: "-"
+        };
+    
+        let tabAnchor = tab.querySelector('a.tabName'); // Знайти <a> елемент з класом 'tabName' всередині 'tab'
+    
+        if (tabAnchor) {
+            tabInfo.id = tabAnchor.getAttribute('tabCounter'); // Отримати значення атрибута 'tabCounter' з <a> елемента
+            tabInfo.name = tabAnchor.textContent.trim(); // Отримати текстовий вміст з <a> елемента і очистити від зайвих пробілів
+        }
+    
+        return tabInfo; // Повернути об'єкт з інформацією про вкладинку
+    }
 
     function getBlockInfo(block, formData) { 
         let blockInfo = {
-            id: block.getAttribute('blockcounter') || "-",
+            id: block.getAttribute('blockCounter') || "-",
             type: "-",
             imageSrc: "-",
             text: "-",
@@ -968,11 +1031,7 @@ document.getElementById("changeButton").addEventListener("click", function() {
         return blockInfo;
     }
         
-        // } else if (block.classList.contains('tabName')) {
-        //     blockInfo = {
-        //         tabCounter: block.getAttribute('tabCounter'),
-        //         tabName: block.querySelector('.tabName').textContent.trim()
-        //     };
+        
        
         function stripStyles(html) {
             var tmp = document.createElement('div');
@@ -997,7 +1056,24 @@ document.getElementById("changeButton").addEventListener("click", function() {
             console.error('Error:', error);
         });
     }
-
+    function sendPutRequestTab(data) {
+        fetch('http://localhost:8080/api/tab', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        }).then(data => {
+            console.log('Success:', data);
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
   
 }); 
 

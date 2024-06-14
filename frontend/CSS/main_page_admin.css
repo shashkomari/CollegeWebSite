@@ -21,7 +21,7 @@
   }
   .navbar-brand{
     font-size: 33px;
-    margin-right: 14%;
+    margin-right: 11%;
   }
   .addTab{
     padding-bottom: 13px;
@@ -705,3 +705,21 @@ main {
   background-color: #750014; /* Darker green background on hover */
 }
 
+.saveButtonTab {
+  background-color: #ffffff; /* Green background */
+  border: none;             /* No border */
+  color: #750014;           /* White text */
+  height: 40px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;       /* Centered text */
+  text-decoration: none;    /* No underline */
+  display: inline-block;    /* Inline-block */
+  font-size: 16px;          /* Increase font size */
+  cursor: pointer;          /* Pointer/hand icon */
+  border-radius: 8px;       /* Rounded corners */
+}
+
+.saveButtonTab:hover {
+  background-color: #e0e0e0; /* Lighter background on hover */
+}
