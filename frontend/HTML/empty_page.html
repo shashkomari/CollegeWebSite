@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ВСП "ФКІСІТ КНЕУ ім.В.Гетьмана"</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/CSS/empty_page.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="icon" type="image/png" href="/static/RESOURCES/ФЕНІКС.png">
+  
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/static/HTML/main_page.html">
+        <img src="/static/RESOURCES/ФЕНІКС.png" width="30" height="30" class="d-inline-block align-top" alt="">
+        ФКІСІТ КНЕУ
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav" id="navbar-items">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white;">
+              Про нас
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+              <a class="dropdown-item" href="/static/HTML/empty_page.html">Адміністрація</a>
+              <a class="dropdown-item" href="#">Відділення програмування</a>
+              <a class="dropdown-item" href="#">Відділення техніко-інформаційних спеціальностей</a>
+              <a class="dropdown-item" href="#">Відділення економічних спеціальностей</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white;">
+              Підготовчі курси
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
+              <a class="dropdown-item" href="#">Основна інформація</a>
+              <a class="dropdown-item" href="#">Вступні випробування</a>
+              <a class="dropdown-item" href="#">Організаційна інформація</a>
+              <a class="dropdown-item" href="#">Поширені запитання</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white;">
+              Студентам
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown3">
+              <a class="dropdown-item" href="#">Комплексний кваліфікований іспит</a>
+              <a class="dropdown-item" href="#">Розклади</a>
+              <a class="dropdown-item" href="#">Гуртожиток</a>
+              <a class="dropdown-item" href="#">Рейтинг успішності</a>
+              <a class="dropdown-item" href="#">Вступ в КНЕУ</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle " href="#" id="navbarDropdown4" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white;">
+              Діяльність
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown4">
+              <a class="dropdown-item" href="#">Фестивалі</a>
+              <a class="dropdown-item" href="#">Новини</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" style="color: white;">Студентська рада</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#" style="color: white;">Документація</a>
+          </li>
+           <!-- More Button -->
+<li class="nav-item dropdown" id="more-dropdown" style="display: none;">
+  <a class="nav-link item more-button" style="position: relative; color: #750014;" href="#" id="moreDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Більше вкладинок</a>
+  <div class="dropdown-menu" aria-labelledby="moreDropdown" id="more-menu"></div>
+</li>
+        </ul>
+        
+      </div>
+    </div>
+  </nav>
+
+  
+  <main>
+    <div class="container-fluid mt-4 content" contenteditable="false">
+      <div class="row">
+        <div class="col-lg-1">
+          <div class="page-name">
+              <span id="page-name-placeholder"></span>
+          </div>
+      </div>
+          <div class=" col-lg-8">   
+         
+    <div id="mainContent" class="item col-lg-12 mb-4" style="position: relative;">
+      <!-- Content will be dynamically inserted here -->
+  </div>
+          </div>
+          
+          <div class="col-lg-3 bg-light">
+            <hr class="d-lg-none">
+            <div class="d-none d-lg-block vertical-line"></div>
+            <div class="mt-4 search-block">
+              <!-- <h2>Пошук</h2> -->
+              <div id="searchInput" class="search-box">
+                <i class="fas fa-search"></i> <!-- Іконка лупи -->
+                  <input type="text" class="form-control" id="searchField">
+              </div>
+          </div>
+            
+            <div class="mt-4 sideContent">
+                <h2>Поширенні посилання</h2>
+                <ul class="list-unstyled">
+                    <li><a href="#">Посилання 1</a></li>
+                    <li><a href="#">Посилання 2</a></li>
+                    <li><a href="#">Посилання 3</a></li>
+                </ul>
+            </div>
+        </div>
+</main>
+ 
+<footer class="footer mt-auto py-3">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-4">
+        <h5>Контактна інформація:</h5>
+          <p>Email: kistkneu@gmail.com
+          <br>Приймальна комісія: тел. 0507577923
+          <br>Бухгалтерія: тел. (044) 272-09-34
+          <br>Учбова частина: тел. (044) 272-00-65</p>
+      </div>
+      <div class="col-md-4">
+        <h5>Адреса</h5>
+        <p class="custom-margin">Львівська площа, 14, Київ, Україна, 04053</p>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2540.2719226653985!2d30.502551276098067!3d50.4546608870612!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d4ce5d8c515749%3A0xe1a4da5710d46c46!2z0KTQmtCG0KHQhtCiINCU0JLQndCXICLQmtCd0JXQoyDRltC8LiDQki4g0JPQtdGC0YzQvNCw0L3QsCI!5e0!3m2!1suk!2sde!4v1704995927630!5m2!1suk!2sde"
+            width="100%" height="170" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="custom-map"></iframe>
+    </div>
+
+      <div class="col-md-4">
+        <h5>Соціальні мережі</h5>
+        <ul class="list-unstyled">
+          <li><a href="#">Facebook</a></li>
+          <li><a href="https://t.me/vsp_fkisit_2022" target="_blank">Telegram</a></li>
+          <li><a href="#">Instagram</a></li>
+        </ul>
+      </div>
+      <p class="text-muted">© 2024 Розроблено: Музиченко А.В. та Шашко М.Р.</p>
+    </div>
+  </div>
+</footer>
+  <!-- Bootstrap JS, Popper.js, and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="/static/JS/main_page.js"></script>
+  
+</body>
+</html>
