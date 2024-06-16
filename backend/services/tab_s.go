@@ -25,7 +25,7 @@ func (s *Service) CreateTab(tab models.CreateTab) (string, error) {
 	return id, nil
 }
 
-func (s *Service) GetTabs() ([]models.GetTabs, error) {
+func (s *Service) GetTabs() ([]models.GetTabsFromDB, error) {
 	tabs, err := s.repository.GetTabs()
 	if err != nil {
 		return nil, fmt.Errorf("repository.GetTabs: %w", err)
