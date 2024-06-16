@@ -231,8 +231,8 @@ fetch('http://localhost:8080/api/tabs', {
                  const newTab = document.createElement('li');
                  newTab.className = 'nav-item change';
                  newTab.innerHTML = `
-                     <a class="nav-link items tabName" style="position: relative; color: white;" href="http://localhost:8080/tmpl?&pageId=${pageId}" tabCounter="${pageId}">
-                         ${pageName}
+                     <a class="nav-link items tabName" style="position: relative; color: white;" href="http://localhost:8080/tmpl?&pageId=${pageId}" pageId="${pageId}" tabCounter="${tabId}">
+                         ${tabName}
                      </a>
                  `;
                  navbarNav.insertBefore(newTab, addTabButton);
@@ -246,7 +246,7 @@ fetch('http://localhost:8080/api/tabs', {
     document.querySelectorAll('.nav-link.items.tabName').forEach(tab => {
         tab.addEventListener('click', (event) => {
            
-            const pageId = tab.getAttribute('tabCounter');
+            const pageId = tab.getAttribute('pageId');
             globalPageId = pageId; // Update the global variable
             fetchBlocks(pageId);
         });
