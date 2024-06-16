@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"os"
-	"text/template"
 
 	//"database/sql"
 	"fmt"
@@ -81,25 +80,42 @@ func main() {
 		c.HTML(http.StatusOK, "main_page_admin.html", gin.H{})
 	})
 
+	r.GET("/tmpl", func(c *gin.Context) {
+		tokenString := c.Query("token")
+		if tokenString == "" {
+			c.HTML(200, "empty_page.html", gin.H{})
+			return
+		}
+
+		err := verifyTokenExpiration(tokenString)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error StatusUnauthorized": err.Error()})
+
+			return
+		}
+
+		c.HTML(http.StatusOK, "admin_page.html", gin.H{})
+	})
+
 	// Serve HTML page
 	r.GET("/sign_in", func(c *gin.Context) {
 		c.HTML(200, "sign_in_page.html", gin.H{})
 	})
 
 	// /////////////////////////
-	type Data struct {
-		Message string
-	}
+	// type Data struct {
+	// 	Message string
+	// }
 
-	tmpl := template.Must(template.ParseFiles("frontend/HTML/test_template.html"))
-	r.GET("/tmpl", func(c *gin.Context) {
-		c.HTML(200, "test_template.html", gin.H{})
-		data := Data{Message: "Lalala"}
-		err := tmpl.Execute(c.Writer, data)
-		if err != nil {
-			log.Println(err)
-		}
-	})
+	// tmpl := template.Must(template.ParseFiles("frontend/HTML/test_template.html"))
+	// r.GET("/tmpl", func(c *gin.Context) {
+	// 	c.HTML(200, "test_template.html", gin.H{})
+	// 	data := Data{Message: "Lalala"}
+	// 	err := tmpl.Execute(c.Writer, data)
+	// 	if err != nil {
+	// 		log.Println(err)
+	// 	}
+	// })
 
 	//////////////////////////
 	// Serve static files (CSS, JS)
