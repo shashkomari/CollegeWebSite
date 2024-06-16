@@ -64,7 +64,7 @@ func main() {
 
 	r.POST("/api/sign_in", handler.SignIn)
 
-	r.GET("/main_page", func(c *gin.Context) {
+	r.GET("/", func(c *gin.Context) {
 		tokenString := c.Query("token")
 		if tokenString == "" {
 			c.HTML(200, "main_page.html", gin.H{})
