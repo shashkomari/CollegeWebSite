@@ -116,9 +116,6 @@ func (r *Repository) EditPage(page models.AllPage) error {
 	if page.Name != "-" {
 		updateDoc["pages.$[page].name"] = page.Name
 	}
-	if page.URL != "-" {
-		updateDoc["pages.$[page].url"] = page.URL
-	}
 
 	// Define the filter to find the specific page by its ID within the tabs collection
 	filter := bson.M{

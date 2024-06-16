@@ -64,17 +64,12 @@ func main() {
 
 	r.POST("/api/sign_in", handler.SignIn)
 
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(200, "main_page.html", gin.H{})
-	})
-
-	// Serve HTML page
-	r.GET("/sign_in", func(c *gin.Context) {
-		c.HTML(200, "sign_in_page.html", gin.H{})
-	})
-
-	r.GET("/main_page_admin", func(c *gin.Context) {
+	r.GET("/main_page", func(c *gin.Context) {
 		tokenString := c.Query("token")
+		if tokenString == "" {
+			c.HTML(200, "main_page.html", gin.H{})
+			return
+		}
 
 		err := verifyTokenExpiration(tokenString)
 		if err != nil {
@@ -84,6 +79,11 @@ func main() {
 		}
 
 		c.HTML(http.StatusOK, "main_page_admin.html", gin.H{})
+	})
+
+	// Serve HTML page
+	r.GET("/sign_in", func(c *gin.Context) {
+		c.HTML(200, "sign_in_page.html", gin.H{})
 	})
 
 	// /////////////////////////

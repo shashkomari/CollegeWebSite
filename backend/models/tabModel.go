@@ -20,6 +20,5 @@ type DBCreateTab struct {
 type GetTabsFromDB struct {
 	ID    primitive.ObjectID `bson:"_id"`
 	Name  string             `bson:"name"`
-	Url   string             `bson:"url"`
 	Pages []DBCreatePage     `bson:"pages"`
 }

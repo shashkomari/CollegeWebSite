@@ -11,10 +11,10 @@ import (
 func (h *HTTP) CreateBlock(c *gin.Context) {
 	var block models.CreateBlock
 
-	if err := c.ShouldBind(&block); err != nil {
+	if err := c.BindJSON(&block); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Error ShouldBind": err.Error(),
+			"Error BindJSON": err.Error(),
 		})
 		return
 	}
@@ -103,10 +103,10 @@ func (h *HTTP) DeleteBlock(c *gin.Context) {
 
 func (h *HTTP) EditBlock(c *gin.Context) {
 	var block models.DBCreateBlock
-	if err := c.ShouldBind(&block); err != nil {
+	if err := c.BindJSON(&block); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
-			"Error ShouldBind": err.Error(),
+			"Error BindJSON": err.Error(),
 		})
 		return
 	}

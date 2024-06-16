@@ -19,7 +19,7 @@ func (h *HTTP) CreatePage(c *gin.Context) {
 		return
 	}
 	log.Println(page)
-	id, url, err := h.Service.CreatePage(page)
+	id, err := h.Service.CreatePage(page)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -29,8 +29,7 @@ func (h *HTTP) CreatePage(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id":  id,
-		"url": url,
+		"id": id,
 	})
 }
 

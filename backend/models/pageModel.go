@@ -18,11 +18,9 @@ type GetPageIdByUrl struct {
 type AllPage struct {
 	ID   primitive.ObjectID `bson:"_id"`
 	Name string             `bson:"name"`
-	URL  string             `bson:"url"`
 }
 type DBCreatePage struct {
 	ID     primitive.ObjectID `bson:"_id"`
 	Name   string             `bson:"name"`
-	URL    string             `bson:"url"`
 	Blocks []DBCreateBlock    `bson:"blocks"`
 }

@@ -19,7 +19,7 @@ func (h *HTTP) CreateTab(c *gin.Context) {
 		return
 	}
 
-	id, page_url, err := h.Service.CreateTab(tab)
+	id, err := h.Service.CreateTab(tab)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -29,8 +29,7 @@ func (h *HTTP) CreateTab(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"id":       id,
-		"page_url": page_url,
+		"id": id,
 	})
 }
 

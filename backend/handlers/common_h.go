@@ -13,12 +13,12 @@ type Service interface {
 	GetAccount(signIn models.AccountData) (string, error)
 
 	GetTabs() ([]models.GetTabs, error)
-	CreateTab(tab models.CreateTab) (string, string, error)
+	CreateTab(tab models.CreateTab) (string, error)
 	DeleteTab(id string) error
 	EditTab(tab models.GetTabs) error
 
 	//GetPages(tabId string) ([]models.GetPages, error)
-	CreatePage(page models.CreatePage) (string, string, error)
+	CreatePage(page models.CreatePage) (string, error)
 	DeletePage(id string) error
 	GetPageIdByUrl(url string) (string, error)
 	EditPage(page models.AllPage) error

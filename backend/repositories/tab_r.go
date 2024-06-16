@@ -48,8 +48,8 @@ func (r *Repository) GetTabs() ([]models.GetTabs, error) {
 		}
 
 		var thisTab models.GetTabs
-		thisTab.ID, thisTab.Name, thisTab.Url = oneTab.ID, oneTab.Name, oneTab.Pages[0].URL
-
+		// thisTab.ID, thisTab.Name, thisTab.Url = oneTab.ID, oneTab.Name, oneTab.Pages[0].URL
+		thisTab.ID, thisTab.Name = oneTab.ID, oneTab.Name
 		tabs = append(tabs, thisTab)
 	}
 
