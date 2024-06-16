@@ -1,5 +1,5 @@
 function getData() {
-  // Отримати токен з локального сховища
+  // Get token from localStorage
   const token = localStorage.getItem('token');
   window.location.href = `/?token=${token}`;
 }

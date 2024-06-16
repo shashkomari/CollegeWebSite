@@ -1,6 +1,4 @@
-$('.carousel').carousel({
-    interval: 3000  // Інтервал в мілісекундах, наприклад, 2000 мс = 2 сек.
-  });
+
 document.addEventListener('DOMContentLoaded', function () {
     const moreButton = document.getElementById('moreDropdown');
   const moreMenu = document.getElementById('more-menu');
@@ -176,28 +174,27 @@ const maxItems = 4;
 // Глобальна змінна для збереження pageId
 let globalPageId = null;
 
-// Function to fetch Page ID from the server
-function getPageIdFromServer() {
-    let currentUrl = new URL(window.location.href);
-    currentUrl.search = '';
-
-    fetch('http://localhost:8080/api/page', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'URL': currentUrl.href
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        const pageId = data.id;
-        globalPageId=pageId;
-        fetchBlocks(pageId);
-    })
-    .catch(error => {
-        console.error('Помилка при отриманні ідентифікатора сторінки:', error);
-    });
+// Функція для отримання pageId з URL-адреси
+function getPageIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('pageId');
 }
+// Функція для очищення вмісту сторінки
+function clearPageContent() {
+    const contentArea = document.getElementById('mainContent'); // припустимо, що вміст сторінки знаходиться в елементі з id 'content-area'
+    if (contentArea) {
+        contentArea.innerHTML = ''; // очищаємо вміст
+    }
+}
+
+// Перевірка наявності pageId в URL-адресі при завантаженні сторінки
+window.addEventListener('load', () => {
+    const pageIdFromUrl = getPageIdFromUrl();
+    if (pageIdFromUrl) {
+        globalPageId = pageIdFromUrl;
+        fetchBlocks(pageIdFromUrl);
+    }
+});
 
 // Fetch data from the server
 fetch('http://localhost:8080/api/tabs', {
@@ -216,49 +213,48 @@ fetch('http://localhost:8080/api/tabs', {
      const navbarNav = document.querySelector('#navbar-items');
 
       // Loop through the fetched tabs and add each to the navbar
-     tabs.forEach(tab => {
-         const tabId = tab.ID;
-         const tabName = tab.Name;
-         const tabPages = tab.Pages; // Fetch the pages array from the current tab
-     
-         // Check if the tab name is not "main_page_admin"
-         if (tabName !== "main_page_admin") {
-             // Loop through the pages of the current tab
-             tabPages.forEach(page => {
-                 const pageId = page.ID;
-                 const pageName = page.Name;
-     
-                 const newTab = document.createElement('li');
-                 newTab.className = 'nav-item change';
-                 newTab.innerHTML = `
-                     <a class="nav-link items tabName" style="position: relative; color: white;" href="http://localhost:8080/tmpl?&pageId=${pageId}" tabCounter="${pageId}">
-                         ${pageName}
-                     </a>
-                 `;
-                 navbarNav.insertBefore(newTab, addTabButton);
-             });
-         }
-     });
+ tabs.forEach(tab => {
+     const tabId = tab.ID;
+     const tabName = tab.Name;
+     const tabPages = tab.Pages; // Fetch the pages array from the current tab
+ 
+     // Check if the tab name is not "main_page_admin"
+     if (tabName !== "main_page_admin") {
+         // Loop through the pages of the current tab
+         tabPages.forEach(page => {
+             const pageId = page.ID;
+             const pageName = page.Name;
+ 
+             const newTab = document.createElement('li');
+             newTab.className = 'nav-item change';
+             newTab.innerHTML = `
+                 <a class="nav-link items tabName" style="position: relative; color: white;" href="http://localhost:8080/tmpl" tabCounter="${pageId}">
+                     ${pageName}
+                 </a>
+             `;
+             navbarNav.insertBefore(newTab, addTabButton);
+                setPageName(pageName);
+         });
+     }
+ });
+
 
     updateNavbar(); // Update the navbar to apply the limit and "More" functionality
-
-    // Add event listeners to tabs
-    document.querySelectorAll('.nav-link.items.tabName').forEach(tab => {
-        tab.addEventListener('click', (event) => {
-           
-            const pageId = tab.getAttribute('tabCounter');
-            globalPageId = pageId; // Update the global variable
-            fetchBlocks(pageId);
-        });
+// Add event listeners to tabs
+document.querySelectorAll('.nav-link.items.tabName').forEach(tab => {
+    tab.addEventListener('click', (event) => {
+        event.preventDefault();
+        const pageId = tab.getAttribute('tabCounter');
+        globalPageId = pageId; // Update the global variable
+        clearPageContent();
+        fetchBlocks(pageId);
+        
     });
-
-    // Call function to fetch pageId dynamically
-    getPageIdFromServer();
+});
 })
 .catch(error => {
     console.error('Error fetching tabs from the server:', error);
 });
-
 
 // Function to update the navbar when new items are added dynamically
 function updateNavbar() {
@@ -286,29 +282,6 @@ function updateNavbar() {
     }
 }
 
-// getPageIdFromServer1();
-// // Function to fetch Page ID from the server
-// function getPageIdFromServer1() {
-//     let currentUrl = new URL(window.location.href);
-//     currentUrl.search = '';
-    
-
-//     fetch('http://localhost:8080/api/page', {
-//         method: 'GET',
-//         headers: {
-//             'Content-Type': 'application/json',
-//             'URL': currentUrl.href
-//         }
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         const pageId = data.id;
-//         fetchBlocks(pageId);
-//     })
-//     .catch(error => {
-//         console.error('Помилка при отриманні ідентифікатора сторінки:', error);
-//     });
-// }
 
 // Функція для отримання блоків на основі ідентифікатора сторінки
 function fetchBlocks(pageId) {
@@ -367,7 +340,7 @@ function createBlockElement(block) {
 // Оновлені функції для створення блоків з даними
 function createLayoutIT(ID, ImageSrc, Text) {
     const layout = document.createElement('div');
-    layout.classList.add('layoutIT', 'row', 'align-items-center', 'hidden');
+    layout.classList.add('layoutIT', 'row', 'align-items-center');
     layout.style.position = 'relative';
     layout.setAttribute('blockCounter', ID);
     layout.setAttribute('blockSent', true);
@@ -389,7 +362,7 @@ function createLayoutIT(ID, ImageSrc, Text) {
 
 function createLayoutT(ID, Text) {
     const layout = document.createElement('div');
-    layout.classList.add('layoutT', 'item', 'editor', 'hidden');
+    layout.classList.add('layoutT', 'item', 'editor');
     layout.style.position = 'relative';
     layout.setAttribute('blockCounter', ID);
     layout.setAttribute('blockSent', true);
@@ -402,7 +375,7 @@ function createLayoutT(ID, Text) {
 
 function createLayoutTL(ID, Text, Link, LinkText) {
     const layout = document.createElement('div');
-    layout.classList.add('layoutTL', 'item','hidden');
+    layout.classList.add('layoutTL', 'item');
     layout.style.position = 'relative';
     layout.setAttribute('blockCounter', ID);
     layout.setAttribute('blockSent', true);
@@ -439,56 +412,15 @@ function addNewBlock1(content, target) {
         target.appendChild(content);
    
 }
-// tabName();
-//   function tabName(){
-//     fetch('http://localhost:8080/api/tabs', {
-//     method: 'GET',
-//     headers: {
-//         'Content-Type': 'application/json'
-//     }
-// })
-// .then(response => response.json())
-// .then(data => {
-//     // Extract tabs array from the response
-//     const tabs = data.tabs;
-
-    
-
-//     let currentPageName = '';
-
-//     // Loop through the fetched tabs and add each to the navbar
-//     tabs.forEach(tab => {
-        
-//         const tabUrl = tab.Url;
-//         const tabName = tab.Name;
-
-//         // Check if the tab name is not "main_page_admin"
-//         if (tabName !== "main_page_admin") {
-           
-//             // Check if the current URL matches the tab URL
-//             if (window.location.href === tabUrl) {
-//                 currentPageName = tabName;
-//             }
-//         }
-//     });
-
-//     // Set the page name using the current tab name
-//     setPageName(currentPageName);
-
-// })
-// .catch(error => {
-//     console.error('Error fetching tabs from the server:', error);
-// });
-//   }
 
 
-// // Function to set the page name
-// function setPageName(pageName) {
-//     const pageNameSpan = document.getElementById('page-name-placeholder');
-//     if (pageNameSpan) {
-//         pageNameSpan.textContent = pageName;
-//     }
-// }
+// Function to set the page name
+function setPageName(pageName) {
+    const pageNameSpan = document.getElementById('page-name-placeholder');
+    if (pageNameSpan) {
+        pageNameSpan.textContent = pageName;
+    }
+}
 
 
   });
