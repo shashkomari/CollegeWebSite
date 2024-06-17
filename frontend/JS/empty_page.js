@@ -173,26 +173,41 @@ const maxItems = 4;
 
 // Глобальна змінна для збереження pageId
 let globalPageId = null;
-
+let globalTabName = null;
 // Функція для отримання pageId з URL-адреси
 function getPageIdFromUrl() {
     const params = new URLSearchParams(window.location.search);
     return params.get('pageId');
 }
+function getTabNameFromUrl(){
+    const name = new URLSearchParams(window.location.search);
+    return name.get('tabName');
+}
 // Функція для очищення вмісту сторінки
 function clearPageContent() {
     const contentArea = document.getElementById('mainContent'); // припустимо, що вміст сторінки знаходиться в елементі з id 'content-area'
+    const sideContent = document.querySelector('.sideContent ul'); 
+    
     if (contentArea) {
-        contentArea.innerHTML = ''; // очищаємо вміст
+        contentArea.innerHTML = ''; // очищаємо вміст основної області
+    }
+    
+    if (sideContent) {
+        sideContent.innerHTML = ''; // очищаємо вміст бокової області
     }
 }
-
 // Перевірка наявності pageId в URL-адресі при завантаженні сторінки
 window.addEventListener('load', () => {
+    clearPageContent();
     const pageIdFromUrl = getPageIdFromUrl();
     if (pageIdFromUrl) {
         globalPageId = pageIdFromUrl;
         fetchBlocks(pageIdFromUrl);
+    }
+    const tabNameFromUrl = getTabNameFromUrl();
+    if (tabNameFromUrl){
+        globalTabName = tabNameFromUrl;
+        setPageName(tabNameFromUrl);
     }
 });
 
@@ -234,6 +249,7 @@ fetch('http://localhost:8080/api/tabs', {
              `;
              navbarNav.insertBefore(newTab, addTabButton);
                 
+            //  setPageName(tabName);
          });
      }
  });
@@ -245,11 +261,13 @@ document.querySelectorAll('.nav-link.items.tabName').forEach(tab => {
     tab.addEventListener('click', (event) => {
         event.preventDefault();
         const pageId = tab.getAttribute('pageId');
+        const tabName = tab.getAttribute('tabName');
+        globalTabName = tabName;
         globalPageId = pageId; // Update the global variable
         clearPageContent();
         fetchBlocks(pageId);
-        const tabName = tab.getAttribute('tabName');
         setPageName(tabName);
+        
     });
 });
 })
