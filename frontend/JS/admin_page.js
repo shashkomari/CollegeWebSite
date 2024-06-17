@@ -154,26 +154,35 @@ const maxItems = 4;
 const token = localStorage.getItem('token');
 // Глобальна змінна для збереження pageId
 let globalPageId = null;
+
 // Функція для отримання pageId з URL-адреси
 function getPageIdFromUrl() {
     const params = new URLSearchParams(window.location.search);
     return params.get('pageId');
 }
+
 // Функція для очищення вмісту сторінки
 function clearPageContent() {
     const contentArea = document.getElementById('mainContent'); // припустимо, що вміст сторінки знаходиться в елементі з id 'content-area'
+    const sideContent = document.querySelector('#sideContent ul'); 
+    
     if (contentArea) {
-        contentArea.innerHTML = ''; // очищаємо вміст
+        contentArea.innerHTML = ''; // очищаємо вміст основної області
+    }
+    
+    if (sideContent) {
+        sideContent.innerHTML = ''; // очищаємо вміст бокової області
     }
 }
-
 // Перевірка наявності pageId в URL-адресі при завантаженні сторінки
 window.addEventListener('load', () => {
+    clearPageContent();
     const pageIdFromUrl = getPageIdFromUrl();
     if (pageIdFromUrl) {
         globalPageId = pageIdFromUrl;
         fetchBlocks(pageIdFromUrl);
     }
+  
 });
 
 // Fetch data from the server
@@ -230,6 +239,7 @@ document.querySelectorAll('.nav-link.items.tabName').forEach(tab => {
         globalPageId = pageId; // Update the global variable
         clearPageContent();
         fetchBlocks(pageId);
+        
     });
 });
 })
