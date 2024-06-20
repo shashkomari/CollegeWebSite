@@ -8,7 +8,7 @@ type CreateBlock struct {
 	Link     string `form:"link" bson:"link,omitempty"`
 	LinkText string `form:"linkText" bson:"linkText,omitempty"`
 	PageId   string `form:"pageId" bson:"pageId" binding:"required"`
-	Image    string `form:"image" bson:"image"`
+	ImageSrc string `form:"imageSrc" bson:"image"`
 }
 type DBCreateBlock struct {
 	ID       primitive.ObjectID `bson:"_id"`

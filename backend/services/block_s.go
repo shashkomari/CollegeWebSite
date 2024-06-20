@@ -24,7 +24,7 @@ func (s *Service) CreateBlock(block models.CreateBlock) (string, error) {
 		if block.Text == "" {
 			return "", fmt.Errorf("services.CreateBlock: text is empty")
 		}
-		if block.Image == "" {
+		if block.ImageSrc == "" {
 			return "", fmt.Errorf("services.CreateBlock: image is empty")
 		}
 
@@ -56,7 +56,7 @@ func (s *Service) CreateBlock(block models.CreateBlock) (string, error) {
 	blockdata.Link = block.Link
 	blockdata.Text = block.Text
 	blockdata.LinkText = block.LinkText
-	blockdata.ImageSrc = block.Image
+	blockdata.ImageSrc = block.ImageSrc
 
 	id, err := s.repository.CreateBlock(blockdata, block.PageId)
 	if err != nil {
