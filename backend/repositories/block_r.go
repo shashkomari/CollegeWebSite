@@ -55,19 +55,6 @@ func (r *Repository) CreateBlock(block models.DBCreateBlock, pageID string) (str
 
 	fmt.Printf("Matched %v documents and updated %v documents.\n", result.MatchedCount, result.ModifiedCount)
 
-	// case "block image+text":
-	// 	// Ваша логіка для цього типу блока
-
-	// case "block text+link":
-	// 	// Ваша логіка для цього типу блока
-
-	// case "block link":
-	// 	// Ваша логіка для цього типу блока
-
-	// default:
-	// 	return "", fmt.Errorf("services.CreateBlock: error type %q", block.Type)
-	// }
-
 	return block.ID.Hex(), nil
 }
 

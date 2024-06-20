@@ -60,6 +60,7 @@ func main() {
 	r.POST("/api/block", handler.CreateBlock)
 	r.DELETE("/api/block", handler.DeleteBlock)
 	r.PUT("/api/block", handler.EditBlock)
+	r.POST("/api/uploadImage", handler.UploadImage)
 
 	r.POST("/api/sign_in", handler.SignIn)
 
