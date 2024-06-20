@@ -355,11 +355,11 @@ function createLayoutIT(ID, ImageSrc, Text) {
     layout.setAttribute('blockCounter', ID);
     layout.setAttribute('blockSent', true);
     layout.innerHTML = `
-    <hr class="split-hr">
         <div class="col-lg-4 item">
             <img src="${ImageSrc}" alt="Image" class="img-fluid mt-3" width="100%" height="100%" data-toggle="modal" data-target="#imageModal">
         </div>
         <div class="col-lg-8 item">
+        <hr class="split-hr">
             <p class="editor">${Text}</p>
         </div>
     `;
@@ -715,11 +715,12 @@ $('#textOptionsModal').modal('hide');
         layout.setAttribute('blockCounter', ''); // Додаємо атрибут з пустим значенням
         // layout.setAttribute('id', 'editor'); // Додаємо id до елементу
         layout.innerHTML = `
-        <hr class="split-hr">
+        
             <div class="col-lg-4 item">
                 <img src="/static/RESOURCES/IMAGE_ADMIN.png" alt="Image" class="img-fluid mt-3" width="100%" height="100%" data-toggle="modal" data-target="#imageModal">
             </div>
             <div class="col-lg-8 item">
+            <hr class="split-hr">
                 <p class="editor">Це лише приклад. Замініть картинку та введіть Ваш текст!</p>
             </div>
         `;
@@ -729,7 +730,7 @@ $('#textOptionsModal').modal('hide');
         // Відкриваємо модальне вікно при кліку на зображення
         openImageModal(layout.querySelector('img').src);
     });
-
+    
     return layout;
     }
 
@@ -987,19 +988,61 @@ if (button.length > 0) {
         editorInitialized = true;
     }
 
-    document.querySelectorAll('.item img').forEach(function(img) {
-        img.addEventListener('click', function() {
-            var fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.addEventListener('change', function() {
-                var file = this.files[0];
-                var formData = new FormData();
-                formData.append('file', file);  // Додаємо обраний файл у formData
-                getBlockInfo(img.parentNode, formData);  // Передаємо батьківський елемент та formData
-            });
-            fileInput.click();
-        });
+// Створення input file один раз
+var fileInput = document.createElement('input');
+fileInput.type = 'file';
+
+fileInput.addEventListener('change', function() {
+    var file = this.files[0];
+    var formData = new FormData();
+    formData.append('image', file); // Додати вибраний файл з ключем 'image' до formData
+
+    // Отримання imgElement з попереднього об'єкту
+    var imgElement = this.imgElement;
+
+    // Виклик функції для завантаження файлу на сервер
+    uploadImage(formData, imgElement);
+});
+
+// Додати обробник події click до кожного зображення в елементах з класом 'item'
+document.querySelectorAll('.item img').forEach(function(img) {
+    img.addEventListener('click', function() {
+        // Збереження imgElement у fileInput для подальшого використання
+        fileInput.imgElement = img;
+
+        // Перевірка, чи є fileInput в DOM, і виклик click() для нього
+        if (!document.body.contains(fileInput)) {
+            document.body.appendChild(fileInput); // Додати fileInput до DOM, якщо його ще немає
+        }
+        fileInput.click(); // Викликати клік для fileInput
     });
+});
+
+function uploadImage(formData, imgElement) {
+    fetch('http://localhost:8080/api/uploadImage', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data && data.url) {
+            imgElement.src = data.url; // Оновлення src зображення
+        } else {
+            console.error('Invalid response format:', data);
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+
+
 
     var links = document.querySelectorAll('a.linkA');
     links.forEach(function(link) {
@@ -1042,7 +1085,7 @@ if (button.length > 0) {
         return tabInfo; // Повернути об'єкт з інформацією про вкладинку
     }
 
-    function getBlockInfo(block, formData) { 
+    function getBlockInfo(block) { 
         let blockInfo = {
             id: block.getAttribute('blockCounter') || "-",
             type: "-",
@@ -1055,8 +1098,10 @@ if (button.length > 0) {
 
         if (block.classList.contains('layoutIT')) {
             blockInfo.type = 'block image+text';
-            blockInfo.imageSrc = formData.get('file') ? block.querySelector('img').src : "-";
-            blockInfo.text = block.innerHTML.trim() || "-";
+            blockInfo.imageSrc = block.querySelector('img').src;
+            // blockInfo.text = block.innerHTML.trim() || "-";
+            blockInfo.text = block.querySelector('.ck-editor__editable').innerHTML.trim() || "-"; // Get innerHTML of the editable div
+        // blockInfo.plainText = stripStyles(blockInfo.text); 
         } else if (block.classList.contains('layoutT')) {
             blockInfo.type = 'block text';
             blockInfo.text = block.innerHTML.trim() || "-";
